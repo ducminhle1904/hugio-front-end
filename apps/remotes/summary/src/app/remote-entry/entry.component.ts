@@ -11,6 +11,6 @@ export class RemoteEntryComponent {
   constructor(private router: Router) {}
 
   route() {
-    this.router.navigate(['/remotes-product']);
+    this.router.navigate(['remotes-product']);
   }
 }

@@ -35,7 +35,7 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
   declarations: [AppComponent, LayoutComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
+    RouterModule.forRoot(appRoutes),
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
