@@ -34,11 +34,25 @@
       </li>
       <li nz-submenu nzOpen nzTitle="Quản lý" nzIcon="form">
         <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="remotes-user">Người Dùng</a>
+          <li nz-submenu nzTitle="Nhân Viên">
+            <ul>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="remotes-user/list">Danh sách nhân viên</a>
+              </li>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="remotes-user/create">Thêm nhân viên</a>
+              </li>
+            </ul>
           </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="remotes-product">Hàng Hóa</a>
+          <li nz-submenu nzTitle="Sản Phẩm">
+            <ul>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="remotes-product/list">Danh sách sản phẩm</a>
+              </li>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="remotes-product/create">Tạo sản phẩm</a>
+              </li>
+            </ul>
           </li>
         </ul>
       </li>
@@ -54,7 +68,19 @@
             [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
           ></span>
         </span>
-        <nz-avatar nzIcon="user" style="background-color: #87d068"></nz-avatar>
+        <nz-avatar
+          nzIcon="user"
+          class="bg-[#87d068] hover:cursor-pointer"
+          nz-dropdown
+          nzTrigger="click"
+          [nzDropdownMenu]="menu"
+        ></nz-avatar>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item>Profile</li>
+            <li nz-menu-item (click)="logout()">Logout</li>
+          </ul>
+        </nz-dropdown-menu>
       </div>
     </nz-header>
     <nz-content>

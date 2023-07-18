@@ -7,18 +7,15 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(
-      [
-        {
-          path: '',
-          loadChildren: () =>
-            import('./remote-entry/entry.module').then(
-              (m) => m.RemoteEntryModule
-            ),
-        },
-      ],
-      { initialNavigation: 'enabledBlocking' }
-    ),
+    RouterModule.forRoot([
+      {
+        path: '',
+        loadChildren: () =>
+          import('./remote-entry/entry.module').then(
+            (m) => m.RemoteEntryModule
+          ),
+      },
+    ]),
   ],
   providers: [],
   bootstrap: [AppComponent],

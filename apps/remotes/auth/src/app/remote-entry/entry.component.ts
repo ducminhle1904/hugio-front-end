@@ -75,7 +75,7 @@ export class RemoteEntryComponent implements OnInit {
   ) {
     this.userService.isAuthenticated.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
-        this.router.navigate(['/app/remotes-summary']);
+        this.router.navigate(['/remotes-summary']);
         return false;
       }
       return true;

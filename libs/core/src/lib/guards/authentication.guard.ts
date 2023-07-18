@@ -11,8 +11,6 @@ export class AuthGuard {
 
   canActivate(): Observable<boolean> | Promise<boolean> | UrlTree | boolean {
     this.userService.isAuthenticated.subscribe((isAuth) => {
-      console.log(isAuth);
-
       if (isAuth) {
         return true;
       } else {

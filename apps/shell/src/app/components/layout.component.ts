@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { UserService } from '@ims/core';
 
 @Component({
   selector: 'ims-layout',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class LayoutComponent {
   isCollapsed = false;
+  userService = inject(UserService);
+
+  public logout() {
+    this.userService.logout();
+  }
 }

@@ -8,7 +8,7 @@ import { map } from 'rxjs';
 export const appRoutes: Route[] = [
   {
     path: '',
-    redirectTo: '/app',
+    redirectTo: 'remotes-summary',
     pathMatch: 'full',
   },
   {
@@ -22,10 +22,9 @@ export const appRoutes: Route[] = [
     ],
   },
   {
-    path: 'app',
+    path: '',
     component: LayoutComponent,
     children: [
-      { path: '', redirectTo: '/remotes-summary', pathMatch: 'full' },
       {
         path: 'remotes-product',
         loadChildren: () =>

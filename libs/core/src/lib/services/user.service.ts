@@ -44,7 +44,7 @@ export class UserService {
 
   logout(): void {
     this.purgeAuth();
-    void this.router.navigate(['/']);
+    void this.router.navigate(['/remotes-auth']);
   }
 
   getCurrentUser(): Observable<{ response: InfoResponse }> {
