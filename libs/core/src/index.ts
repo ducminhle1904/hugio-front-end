@@ -11,3 +11,8 @@ export * from './lib/services/user.service';
 
 /* Guards */
 export * from './lib/guards/authentication.guard';
+
+/* Models */
+export * from './lib/models/product.model';
+export * from './lib/models/response.model';
+export * from './lib/models/user.model';
