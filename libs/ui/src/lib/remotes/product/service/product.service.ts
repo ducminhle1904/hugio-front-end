@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   Category,
   CategoryResponse,
+  Product,
   ProductCreateRequest,
   ProductResponse,
   ResponseModel,
@@ -15,15 +16,21 @@ import { Observable, map } from 'rxjs';
 export class ProductService {
   http = inject(HttpClient);
 
-  public queryListProduct(): Observable<ProductResponse> {
-    return this.http.post<ProductResponse>('/product_service/product/all', {
-      request: {
-        page_number: 1,
-        page_size: 100,
-        property: 'string',
-        sort: 'ASC',
-      },
-    });
+  public queryListProduct(): Observable<Product[]> {
+    return this.http
+      .post<ProductResponse>('/product_service/product/all', {
+        request: {
+          page_number: 1,
+          page_size: 100,
+          property: 'string',
+          sort: 'ASC',
+        },
+      })
+      .pipe(
+        map((response) => {
+          return response.response.content;
+        })
+      );
   }
 
   public queryListCategory(): Observable<Category[]> {

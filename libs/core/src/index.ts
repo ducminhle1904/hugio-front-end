@@ -8,6 +8,7 @@ export * from './lib/interceptor/token.interceptor';
 /* Services */
 export * from './lib/services/jwt.service';
 export * from './lib/services/user.service';
+export * from './lib/services/loading.service';
 
 /* Guards */
 export * from './lib/guards/authentication.guard';

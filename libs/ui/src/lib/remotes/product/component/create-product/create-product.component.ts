@@ -1,16 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  inject,
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -18,171 +7,221 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ProductService } from '../../service/product.service';
-import { Category } from '@ims/core';
+import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
-  selector: 'ims-create-product',
+  selector: 'ims-product-dialog',
   standalone: true,
   imports: [
     CommonModule,
-    NzModalModule,
-    NzButtonModule,
     NzIconModule,
     NzInputModule,
     NzFormModule,
     NzSelectModule,
+    NzInputNumberModule,
+    NzMessageModule,
+    NzButtonModule,
     FormsModule,
     ReactiveFormsModule,
   ],
-  template: `<button
-      nz-button
-      nzType="primary"
-      (click)="showModal()"
-      class="flex items-center"
-    >
-      <span nz-icon nzType="plus" nzTheme="outline"></span>
-      Create Product
-    </button>
-    <nz-modal
-      [(nzVisible)]="isVisible"
-      nzTitle="Create new product"
-      (nzOnCancel)="handleCancel()"
-      (nzOnOk)="handleOk()"
-      [nzOkLoading]="isOkLoading"
-    >
-      <form nz-form [formGroup]="validateForm" *nzModalContent>
-        <nz-form-item class="justify-between">
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nickname" nzRequired>
-            <span>Product name</span>
-          </nz-form-label>
-          <nz-form-control
-            [nzSm]="14"
-            [nzXs]="24"
-            nzErrorTip="Please input product name!"
-          >
-            <input nz-input id="name" formControlName="name" />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item class="justify-between">
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="price" nzRequired>
-            <span>Product price</span>
-          </nz-form-label>
-          <nz-form-control
-            [nzSm]="14"
-            [nzXs]="24"
-            nzErrorTip="Please input product price!"
-          >
-            <input nz-input id="price" formControlName="price" />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item class="justify-between">
-          <nz-form-label
-            [nzSm]="6"
-            [nzXs]="24"
-            nzFor="product_description"
-            nzRequired
-          >
-            <span>Product description</span>
-          </nz-form-label>
-          <nz-form-control
-            [nzSm]="14"
-            [nzXs]="24"
-            nzErrorTip="Please input product description!"
-          >
-            <input
-              nz-input
-              id="product_description"
-              formControlName="product_description"
-            />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item class="justify-between">
-          <nz-form-label
-            [nzSm]="6"
-            [nzXs]="24"
-            nzFor="product_quantity"
-            nzRequired
-          >
-            <span>Product quantity</span>
-          </nz-form-label>
-          <nz-form-control
-            [nzSm]="14"
-            [nzXs]="24"
-            nzErrorTip="Please input product quantity!"
-          >
-            <input
-              nz-input
-              id="product_quantity"
-              formControlName="product_quantity"
-            />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item
-          class="justify-between"
-          *ngIf="listOfCategory$ | async as categories"
+  template: `
+    <form nz-form [formGroup]="validateForm">
+      <nz-form-item class="justify-between">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nickname" nzRequired>
+          <span>Product name</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input product name!"
         >
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" nzRequired>
-            <span>Product category</span>
-          </nz-form-label>
-          <nz-form-control
-            [nzSm]="14"
-            [nzXs]="24"
-            nzErrorTip="Please choose product category!"
+          <input nz-input id="name" formControlName="name" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="justify-between">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="price" nzRequired>
+          <span>Product price</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input product price!"
+        >
+          <nz-input-number
+            id="price"
+            formControlName="price"
+            [nzMin]="1"
+            [nzMax]="10000"
+            [nzStep]="1"
+            [nzFormatter]="formatterDollar"
+            [nzParser]="parserDollar"
+            class="w-full"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="justify-between">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="discount" nzRequired>
+          <span>Product discount</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input product discount!"
+        >
+          <nz-input-number
+            id="discount"
+            formControlName="discount"
+            [nzMin]="1"
+            [nzMax]="10000"
+            [nzStep]="1"
+            [nzFormatter]="formatterDollar"
+            [nzParser]="parserDollar"
+            class="w-full"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="justify-between">
+        <nz-form-label
+          [nzSm]="6"
+          [nzXs]="24"
+          nzFor="product_description"
+          nzRequired
+        >
+          <span>Product description</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input product description!"
+        >
+          <input
+            nz-input
+            id="product_description"
+            formControlName="product_description"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="justify-between">
+        <nz-form-label
+          [nzSm]="6"
+          [nzXs]="24"
+          nzFor="product_quantity"
+          nzRequired
+        >
+          <span>Product quantity</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input product quantity!"
+        >
+          <nz-input-number
+            id="product_quantity"
+            formControlName="product_quantity"
+            [nzMin]="1"
+            [nzMax]="1000"
+            [nzStep]="1"
+            class="w-full"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item
+        class="justify-between"
+        *ngIf="listOfCategory$ | async as categories"
+      >
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" nzRequired>
+          <span>Product category</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please choose product category!"
+        >
+          <nz-select
+            [nzMaxTagCount]="3"
+            [nzMaxTagPlaceholder]="tagPlaceHolder"
+            nzMode="multiple"
+            nzPlaceHolder="Please select category"
+            id="category"
+            formControlName="category"
           >
-            <nz-select
-              [nzMaxTagCount]="3"
-              [nzMaxTagPlaceholder]="tagPlaceHolder"
-              nzMode="multiple"
-              nzPlaceHolder="Please select category"
-              id="category"
-              formControlName="category"
-            >
-              <nz-option
-                *ngFor="let item of categories"
-                [nzLabel]="item.category_name"
-                [nzValue]="item.category_name"
-              ></nz-option>
-            </nz-select>
-            <ng-template #tagPlaceHolder let-selectedList
-              >and {{ selectedList.length }} more selected</ng-template
-            >
-          </nz-form-control>
-        </nz-form-item>
-      </form>
-    </nz-modal> `,
+            <nz-option
+              *ngFor="let item of categories"
+              [nzLabel]="item.category_name"
+              [nzValue]="item.category_name"
+            ></nz-option>
+          </nz-select>
+          <ng-template #tagPlaceHolder let-selectedList
+            >and {{ selectedList.length }} more selected</ng-template
+          >
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    <div class="flex gap-2 justify-end">
+      <button nz-button nzType="default" (click)="onClose()">Cancel</button>
+      <button
+        nz-button
+        nzType="primary"
+        (click)="handleCreateProduct()"
+        class="flex items-center mb-2"
+      >
+        Create Product
+      </button>
+    </div>
+  `,
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateProductComponent implements OnInit {
+export class ProductDialogComponent implements OnInit, OnDestroy {
   fb = inject(UntypedFormBuilder);
   productService = inject(ProductService);
+  messageService = inject(NzMessageService);
+  modalRef = inject(NzModalRef<ProductDialogComponent>);
 
-  isVisible = false;
-  isOkLoading = false;
-  validateForm!: UntypedFormGroup;
+  public validateForm!: UntypedFormGroup;
 
-  listOfCategory$ = this.productService.queryListCategory();
+  public formatterDollar = (value: number): string => `$ ${value}`;
+  public parserDollar = (value: string): string => value.replace('$ ', '');
+
+  public listOfCategory$ = this.productService.queryListCategory();
+
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
-    this.validateForm = this.fb.group({
-      name: [null, [Validators.required]],
-      price: [null, [Validators.required]],
-      product_description: [null, [Validators.required]],
-      product_quantity: [null, [Validators.required]],
-      category: [null, [Validators.required]],
-      details: [null, [Validators.required]],
-    });
+    this.initForm();
   }
 
-  showModal(): void {
-    this.isVisible = true;
-  }
-
-  handleOk(): void {
-    this.isOkLoading = true;
+  public handleCreateProduct(): void {
     if (this.validateForm.valid) {
-      console.log('submit', this.validateForm.value);
+      this.productService
+        .createProduct(this.validateForm.value)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe({
+          next: (res) => {
+            if (res.codeNumber === 0) {
+              this.messageService.create(
+                'success',
+                'Create product successfully'
+              );
+              this.modalRef.close(true);
+            }
+          },
+          error: () => {
+            this.messageService.create(
+              'error',
+              'There was an Error, please contact administrator'
+            );
+          },
+        });
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -193,7 +232,23 @@ export class CreateProductComponent implements OnInit {
     }
   }
 
-  handleCancel(): void {
-    this.isVisible = false;
+  public onClose() {
+    this.modalRef.close();
+  }
+
+  private initForm(): void {
+    this.validateForm = this.fb.group({
+      name: [null, [Validators.required]],
+      price: [100, [Validators.required]],
+      discount: [0, [Validators.required]],
+      product_description: [null, [Validators.required]],
+      product_quantity: [1, [Validators.required]],
+      category: [null, [Validators.required]],
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

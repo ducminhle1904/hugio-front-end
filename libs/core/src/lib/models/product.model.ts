@@ -42,10 +42,11 @@ export interface ProductDetail {
 export interface ProductCreateRequest {
   name: string;
   price: number;
+  discount: number;
   product_description: string;
   product_quantity: number;
   category: string[];
-  details: [
+  details?: [
     {
       key: string;
       value: string;
