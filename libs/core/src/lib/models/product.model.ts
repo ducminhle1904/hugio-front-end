@@ -5,11 +5,11 @@ export interface Product {
   categories: Category[];
   createdAt: string;
   createdBy: string;
-  discount: number;
   id: number;
   price: number;
   product_description: string;
   product_details: ProductDetail[];
+  product_quantity: number;
   product_name: string;
   product_uid: string;
   raw_product_name: string;
@@ -45,6 +45,21 @@ export interface ProductCreateRequest {
   discount: number;
   product_description: string;
   product_quantity: number;
+  category: string[];
+  details?: [
+    {
+      key: string;
+      value: string;
+    }
+  ];
+}
+
+export interface ProductUpdateRequest {
+  product_uid: string;
+  name: string;
+  price: number;
+  discount: number;
+  product_description: string;
   category: string[];
   details?: [
     {

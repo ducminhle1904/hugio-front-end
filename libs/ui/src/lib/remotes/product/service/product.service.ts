@@ -3,9 +3,9 @@ import { Injectable, inject } from '@angular/core';
 import {
   Category,
   CategoryResponse,
-  Product,
   ProductCreateRequest,
   ProductResponse,
+  ProductUpdateRequest,
   ResponseModel,
 } from '@ims/core';
 import { Observable, map } from 'rxjs';
@@ -16,21 +16,15 @@ import { Observable, map } from 'rxjs';
 export class ProductService {
   http = inject(HttpClient);
 
-  public queryListProduct(): Observable<Product[]> {
-    return this.http
-      .post<ProductResponse>('/product_service/product/all', {
-        request: {
-          page_number: 1,
-          page_size: 100,
-          property: 'string',
-          sort: 'ASC',
-        },
-      })
-      .pipe(
-        map((response) => {
-          return response.response.content;
-        })
-      );
+  public queryListProduct(): Observable<ProductResponse> {
+    return this.http.post<ProductResponse>('/product_service/product/all', {
+      request: {
+        page_number: 1,
+        page_size: 100,
+        property: 'string',
+        sort: 'ASC',
+      },
+    });
   }
 
   public queryListCategory(): Observable<Category[]> {
@@ -53,6 +47,14 @@ export class ProductService {
     request: ProductCreateRequest
   ): Observable<ResponseModel> {
     return this.http.post<ResponseModel>('/product_service/product/create', {
+      request,
+    });
+  }
+
+  public updateProduct(
+    request: ProductUpdateRequest
+  ): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/product_service/product/edit', {
       request,
     });
   }

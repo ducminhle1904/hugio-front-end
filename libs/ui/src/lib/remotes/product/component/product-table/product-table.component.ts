@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { LoadingService, Product } from '@ims/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -11,10 +11,9 @@ import {
 } from 'ng-zorro-antd/notification';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { Observable } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ProductService } from '../../service/product.service';
-import { ProductDialogComponent } from '../create-product/create-product.component';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { ProductDialogComponent } from '../create-product/product-dialog.component';
 
 @Component({
   selector: 'ims-product-table',
@@ -28,9 +27,9 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
     NzModalModule,
     NzNotificationModule,
     NzButtonModule,
-    NzEmptyModule,
   ],
-  template: ` <button
+  template: `
+    <button
       nz-button
       nzType="primary"
       (click)="showModal()"
@@ -39,78 +38,74 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
       <span nz-icon nzType="plus" nzTheme="outline"></span>
       Create Product
     </button>
-    <ng-container *ngIf="listOfProduct$ | async as products">
-      <ng-container *ngIf="products.length > 0; else emptyComponent">
-        <nz-table #basicTable [nzData]="products">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Discount</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of basicTable.data">
-              <td>{{ data.product_name }}</td>
-              <td>{{ data.price }}</td>
-              <td>{{ data.discount }}</td>
-              <td>
-                <nz-tag [nzColor]="data.active ? '#87d068' : '#f50'">{{
-                  data.active ? 'Active' : 'Inactive'
-                }}</nz-tag>
-              </td>
-              <td>
-                <button
-                  nz-button
-                  nz-dropdown
-                  [nzDropdownMenu]="menu1"
-                  nzPlacement="bottomRight"
-                  nzTrigger="click"
+    <nz-table
+      #basicTable
+      [nzData]="listOfProduct"
+      [nzLoading]="loading$ | async"
+    >
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{ data.product_name }}</td>
+          <td>{{ data.price }}</td>
+          <td>
+            <nz-tag [nzColor]="data.active ? '#87d068' : '#f50'">{{
+              data.active ? 'Active' : 'Inactive'
+            }}</nz-tag>
+          </td>
+          <td>
+            <button
+              nz-button
+              nz-dropdown
+              [nzDropdownMenu]="menu1"
+              nzPlacement="bottomRight"
+              nzTrigger="click"
+            >
+              <span nz-icon nzType="ellipsis"></span>
+            </button>
+            <nz-dropdown-menu #menu1="nzDropdownMenu">
+              <ul nz-menu>
+                <li
+                  nz-menu-item
+                  class="flex items-center"
+                  style="gap: 8px"
+                  (click)="handleEdit(data)"
                 >
-                  <span nz-icon nzType="ellipsis"></span>
-                </button>
-                <nz-dropdown-menu #menu1="nzDropdownMenu">
-                  <ul nz-menu>
-                    <li
-                      nz-menu-item
-                      class="flex items-center"
-                      style="gap: 8px"
-                      (click)="handleEdit()"
-                    >
-                      <span nz-icon nzType="edit" nzTheme="outline"></span>Edit
-                    </li>
-                    <li
-                      nz-menu-item
-                      class="flex items-center"
-                      style="gap: 8px"
-                      (click)="handleDelete(data)"
-                    >
-                      <span nz-icon nzType="delete" nzTheme="outline"></span
-                      >Delete
-                    </li>
-                  </ul>
-                </nz-dropdown-menu>
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
-      </ng-container>
-    </ng-container>
-    <ng-template #emptyComponent>
-      <nz-empty></nz-empty>
-    </ng-template>`,
+                  <span nz-icon nzType="edit" nzTheme="outline"></span>Edit
+                </li>
+                <li
+                  nz-menu-item
+                  class="flex items-center"
+                  style="gap: 8px"
+                  (click)="handleDelete(data)"
+                >
+                  <span nz-icon nzType="delete" nzTheme="outline"></span>Delete
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  `,
   styles: [],
 })
-export class ProductTableComponent implements OnInit {
+export class ProductTableComponent implements OnInit, OnDestroy {
   productService = inject(ProductService);
   modalService = inject(NzModalService);
   notiService = inject(NzNotificationService);
   loadingService = inject(LoadingService);
 
-  public listOfProduct$!: Observable<Product[]>;
+  public listOfProduct: Product[] = [];
   public loading$ = this.loadingService.isLoading();
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
     this.getListProduct();
@@ -127,8 +122,19 @@ export class ProductTableComponent implements OnInit {
     });
   }
 
-  public handleEdit() {
-    console.log('edit');
+  public handleEdit(product: Product) {
+    const modalRef: NzModalRef = this.modalService.create({
+      nzTitle: 'Update product',
+      nzContent: ProductDialogComponent,
+      nzFooter: null,
+      nzComponentParams: {
+        productData: product,
+        modalType: 'Update',
+      },
+    });
+    modalRef.afterClose.subscribe((isSuccessCreate) => {
+      isSuccessCreate && this.getListProduct();
+    });
   }
 
   public handleDelete(product: Product) {
@@ -144,22 +150,37 @@ export class ProductTableComponent implements OnInit {
   }
 
   private getListProduct() {
-    this.listOfProduct$ = this.productService.queryListProduct();
+    this.loadingService.setLoading(true);
+    this.productService
+      .queryListProduct()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.listOfProduct = data.response.content;
+        this.loadingService.setLoading(false);
+      });
   }
 
   private deleteProduct(product_id: string) {
-    this.productService.deleteProduct(product_id).subscribe({
-      next: () => {
-        this.notiService.create(
-          'success',
-          'Delete product successfully',
-          'Success'
-        );
-        this.getListProduct();
-      },
-      error: () => {
-        this.notiService.create('error', 'Fail to delete product', 'Failed');
-      },
-    });
+    this.productService
+      .deleteProduct(product_id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: () => {
+          this.notiService.create(
+            'success',
+            'Delete product successfully',
+            'Success'
+          );
+          this.getListProduct();
+        },
+        error: () => {
+          this.notiService.create('error', 'Fail to delete product', 'Failed');
+        },
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

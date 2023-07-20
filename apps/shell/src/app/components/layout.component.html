@@ -10,7 +10,7 @@
     <div class="sidebar-logo">
       <a href="https://ng.ant.design/" target="_blank">
         <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo" />
-        <h1>Ant Design Of Angular</h1>
+        <h1>HUGIO-IMS</h1>
       </a>
     </div>
     <ul
@@ -19,38 +19,32 @@
       nzMode="inline"
       [nzInlineCollapsed]="isCollapsed"
     >
-      <li nz-submenu nzOpen nzTitle="Tổng quan" nzIcon="dashboard">
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
         <ul>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="remotes-summary">Tóm tắt</a>
+            <a routerLink="remotes-summary">Summary</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="remotes-analysis">Phân Tích Số Liệu</a>
+            <a routerLink="remotes-analysis">Analysis</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="remotes-cashbook">Sổ Quỹ</a>
+            <a routerLink="remotes-cashbook">Cashbook</a>
           </li>
         </ul>
       </li>
-      <li nz-submenu nzOpen nzTitle="Quản lý" nzIcon="form">
+      <li nz-submenu nzOpen nzTitle="Management" nzIcon="form">
         <ul>
-          <li nz-submenu nzTitle="Nhân Viên">
+          <li nz-submenu nzTitle="Employee">
             <ul>
               <li nz-menu-item nzMatchRouter>
-                <a routerLink="remotes-user/list">Danh sách nhân viên</a>
-              </li>
-              <li nz-menu-item nzMatchRouter>
-                <a routerLink="remotes-user/create">Thêm nhân viên</a>
+                <a routerLink="remotes-user/list">Employee List</a>
               </li>
             </ul>
           </li>
-          <li nz-submenu nzTitle="Sản Phẩm">
+          <li nz-submenu nzTitle="Product">
             <ul>
               <li nz-menu-item nzMatchRouter>
-                <a routerLink="remotes-product/list">Danh sách sản phẩm</a>
-              </li>
-              <li nz-menu-item nzMatchRouter>
-                <a routerLink="remotes-product/create">Tạo sản phẩm</a>
+                <a routerLink="remotes-product/list">Product List</a>
               </li>
             </ul>
           </li>

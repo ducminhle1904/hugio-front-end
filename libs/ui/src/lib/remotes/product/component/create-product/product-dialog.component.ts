@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -18,6 +18,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ProductService } from '../../service/product.service';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { Product } from '@ims/core';
 
 @Component({
   selector: 'ims-product-dialog',
@@ -37,7 +38,13 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   template: `
     <form nz-form [formGroup]="validateForm">
       <nz-form-item class="justify-between">
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nickname" nzRequired>
+        <nz-form-label
+          class="text-left"
+          [nzSm]="10"
+          [nzXs]="24"
+          nzFor="nickname"
+          nzRequired
+        >
           <span>Product name</span>
         </nz-form-label>
         <nz-form-control
@@ -49,7 +56,13 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
         </nz-form-control>
       </nz-form-item>
       <nz-form-item class="justify-between">
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="price" nzRequired>
+        <nz-form-label
+          class="text-left"
+          [nzSm]="10"
+          [nzXs]="24"
+          nzFor="price"
+          nzRequired
+        >
           <span>Product price</span>
         </nz-form-label>
         <nz-form-control
@@ -70,29 +83,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
         </nz-form-control>
       </nz-form-item>
       <nz-form-item class="justify-between">
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="discount" nzRequired>
-          <span>Product discount</span>
-        </nz-form-label>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Please input product discount!"
-        >
-          <nz-input-number
-            id="discount"
-            formControlName="discount"
-            [nzMin]="1"
-            [nzMax]="10000"
-            [nzStep]="1"
-            [nzFormatter]="formatterDollar"
-            [nzParser]="parserDollar"
-            class="w-full"
-          ></nz-input-number>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item class="justify-between">
         <nz-form-label
-          [nzSm]="6"
+          class="text-left"
+          [nzSm]="10"
           [nzXs]="24"
           nzFor="product_description"
           nzRequired
@@ -113,7 +106,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
       </nz-form-item>
       <nz-form-item class="justify-between">
         <nz-form-label
-          [nzSm]="6"
+          class="text-left"
+          [nzSm]="10"
           [nzXs]="24"
           nzFor="product_quantity"
           nzRequired
@@ -139,7 +133,13 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
         class="justify-between"
         *ngIf="listOfCategory$ | async as categories"
       >
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" nzRequired>
+        <nz-form-label
+          class="text-left"
+          [nzSm]="10"
+          [nzXs]="24"
+          nzFor="category"
+          nzRequired
+        >
           <span>Product category</span>
         </nz-form-label>
         <nz-form-control
@@ -172,10 +172,10 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
       <button
         nz-button
         nzType="primary"
-        (click)="handleCreateProduct()"
+        (click)="handleSubmit()"
         class="flex items-center mb-2"
       >
-        Create Product
+        {{ modalType }} Product
       </button>
     </div>
   `,
@@ -187,6 +187,9 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   messageService = inject(NzMessageService);
   modalRef = inject(NzModalRef<ProductDialogComponent>);
 
+  @Input() productData!: Product;
+  @Input() modalType = 'Create';
+
   public validateForm!: UntypedFormGroup;
 
   public formatterDollar = (value: number): string => `$ ${value}`;
@@ -197,31 +200,16 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
-    this.initForm();
+    this.initForm(this.productData);
   }
 
-  public handleCreateProduct(): void {
+  public handleSubmit(): void {
     if (this.validateForm.valid) {
-      this.productService
-        .createProduct(this.validateForm.value)
-        .pipe(takeUntil(this.unsubscribe$))
-        .subscribe({
-          next: (res) => {
-            if (res.codeNumber === 0) {
-              this.messageService.create(
-                'success',
-                'Create product successfully'
-              );
-              this.modalRef.close(true);
-            }
-          },
-          error: () => {
-            this.messageService.create(
-              'error',
-              'There was an Error, please contact administrator'
-            );
-          },
-        });
+      if (this.modalType === 'Create') {
+        this.handleCreate();
+      } else {
+        this.handleUpdate();
+      }
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -236,14 +224,68 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
     this.modalRef.close();
   }
 
-  private initForm(): void {
+  private handleCreate() {
+    this.productService
+      .createProduct(this.validateForm.value)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: (res) => {
+          if (res.codeNumber === 0) {
+            this.messageService.create(
+              'success',
+              'Create product successfully'
+            );
+            this.modalRef.close(true);
+          }
+        },
+        error: () => {
+          this.messageService.create(
+            'error',
+            'There was an Error, please contact administrator'
+          );
+        },
+      });
+  }
+  private handleUpdate() {
+    this.productService
+      .updateProduct(this.validateForm.value)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: (res) => {
+          if (res.codeNumber === 0) {
+            this.messageService.create(
+              'success',
+              'Update product successfully'
+            );
+            this.modalRef.close(true);
+          }
+        },
+        error: () => {
+          this.messageService.create(
+            'error',
+            'There was an Error, please contact administrator'
+          );
+        },
+      });
+  }
+
+  private initForm(productData: Product): void {
     this.validateForm = this.fb.group({
-      name: [null, [Validators.required]],
-      price: [100, [Validators.required]],
-      discount: [0, [Validators.required]],
-      product_description: [null, [Validators.required]],
-      product_quantity: [1, [Validators.required]],
-      category: [null, [Validators.required]],
+      name: [productData.product_name || null, [Validators.required]],
+      price: [productData.price || 100, [Validators.required]],
+      product_description: [
+        productData.product_description || null,
+        [Validators.required],
+      ],
+      product_quantity: [
+        productData.product_quantity || 1,
+        [Validators.required],
+      ],
+      category: [
+        productData.categories.map((category) => category.category_name) ||
+          null,
+        [Validators.required],
+      ],
     });
   }
 
