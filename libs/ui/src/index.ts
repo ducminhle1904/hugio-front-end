@@ -1,4 +1,4 @@
-export * from './lib/ui/ui.component';
+export * from './lib/ui.module';
 
 /* Product */
 export * from './lib/remotes/product/component/product-table/product-table.component';
