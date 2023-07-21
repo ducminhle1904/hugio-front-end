@@ -5,7 +5,7 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
-import { UserService } from '@ims/core';
+import { UserService } from '../services/user.service';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -22,7 +22,7 @@ export class ShowAuthedDirective implements OnInit {
   condition = false;
 
   ngOnInit() {
-    this.userService.isAuthenticated.subscribe((isAuthenticated: boolean) => {
+    this.userService.isAuthenticated.subscribe((isAuthenticated) => {
       if (
         (isAuthenticated && this.condition) ||
         (!isAuthenticated && !this.condition)
