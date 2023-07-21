@@ -1,0 +1,8 @@
+{
+  "remotes-summary": "http://192.168.1.22:4201",
+  "remotes-analysis": "http://192.168.1.22:4202",
+  "remotes-cashbook": "http://192.168.1.22:4203",
+  "remotes-user": "http://192.168.1.22:4204",
+  "remotes-product": "http://192.168.1.22:4205",
+  "remotes-auth": "http://192.168.1.22:4206"
+}

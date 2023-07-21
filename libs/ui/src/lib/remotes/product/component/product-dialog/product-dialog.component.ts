@@ -154,6 +154,7 @@ import { Product } from '@ims/core';
             nzPlaceHolder="Please select category"
             id="category"
             formControlName="category"
+            class="w-full"
           >
             <nz-option
               *ngFor="let item of categories"
