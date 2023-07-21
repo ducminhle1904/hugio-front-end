@@ -248,7 +248,10 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   }
   private handleUpdate() {
     this.productService
-      .updateProduct(this.validateForm.value)
+      .updateProduct({
+        ...this.validateForm.value,
+        product_uid: this.productData.product_uid,
+      })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (res) => {
@@ -271,18 +274,18 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
 
   private initForm(productData: Product): void {
     this.validateForm = this.fb.group({
-      name: [productData.product_name || null, [Validators.required]],
-      price: [productData.price || 100, [Validators.required]],
+      name: [productData?.product_name || null, [Validators.required]],
+      price: [productData?.price || 100, [Validators.required]],
       product_description: [
-        productData.product_description || null,
+        productData?.product_description || null,
         [Validators.required],
       ],
       product_quantity: [
-        productData.product_quantity || 1,
+        productData?.product_quantity || 1,
         [Validators.required],
       ],
       category: [
-        productData.categories.map((category) => category.category_name) ||
+        productData?.categories.map((category) => category.category_name) ||
           null,
         [Validators.required],
       ],
