@@ -1,8 +1,8 @@
 {
-  "remotes-summary": "http://192.168.1.22:4201",
-  "remotes-analysis": "http://192.168.1.22:4202",
-  "remotes-cashbook": "http://192.168.1.22:4203",
-  "remotes-user": "http://192.168.1.22:4204",
-  "remotes-product": "http://192.168.1.22:4205",
-  "remotes-auth": "http://192.168.1.22:4206"
+  "remotes-summary": "https://28ea9b19f464.ngrok.app",
+  "remotes-analysis": "https://514787ac7024.ngrok.app",
+  "remotes-cashbook": "https://8ec066e910f2.ngrok.app",
+  "remotes-user": "https://8a0d7ecff3a5.ngrok.app",
+  "remotes-product": "https://20e477ace7c6.ngrok.app",
+  "remotes-auth": "https://e0a1add8a761.ngrok.app"
 }
