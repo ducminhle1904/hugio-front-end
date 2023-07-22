@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductTableComponent } from '@ims/ui';
+import { ProductTableComponent } from '@ims/feature';
 
 @Component({
   selector: 'ims-product-list',

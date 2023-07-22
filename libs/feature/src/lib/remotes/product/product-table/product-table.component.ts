@@ -12,8 +12,8 @@ import {
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductService } from '../../service/product.service';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
+import { ProductService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-product-table',

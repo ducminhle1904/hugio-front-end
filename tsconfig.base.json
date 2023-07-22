@@ -16,6 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@ims/core": ["libs/core/src/index.ts"],
+      "@ims/data-access": ["libs/data-access/src/index.ts"],
+      "@ims/feature": ["libs/feature/src/index.ts"],
       "@ims/shared": ["libs/shared/src/index.ts"],
       "@ims/ui": ["libs/ui/src/index.ts"]
     }

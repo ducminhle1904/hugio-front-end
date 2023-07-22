@@ -15,10 +15,10 @@ import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProductService } from '../../service/product.service';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { Product } from '@ims/core';
+import { ProductService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-product-dialog',
