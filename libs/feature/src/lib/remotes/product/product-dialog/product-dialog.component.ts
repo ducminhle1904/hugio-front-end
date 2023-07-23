@@ -18,7 +18,8 @@ import { takeUntil } from 'rxjs/operators';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { Category, Product } from '@ims/core';
-import { ProductService } from '@ims/data-access';
+import { ProductService } from '../product.service';
+// import { ProductService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-product-dialog',
