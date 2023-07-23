@@ -24,6 +24,27 @@ docker build . -t hugio/fe:app_summary -f ./deploy/summary/Dockerfile
 echo '>>>>>>>>>>>>>> Build user image'
 docker build . -t hugio/fe:app_user -f ./deploy/user/Dockerfile
 
+echo '>>>>>>>>>>>>>> Push shell image'
+kind load docker-image hugio/fe:app_shell
+
+echo '>>>>>>>>>>>>>> Push analysis image'
+kind load docker-image hugio/fe:app_analysis
+
+echo '>>>>>>>>>>>>>> Push auth image'
+kind load docker-image hugio/fe:app_auth
+
+echo '>>>>>>>>>>>>>> Push cashbook image'
+kind load docker-image hugio/fe:app_cashbook
+
+echo '>>>>>>>>>>>>>> Push product image'
+kind load docker-image hugio/fe:app_product
+
+echo '>>>>>>>>>>>>>> Push summary image'
+kind load docker-image hugio/fe:app_summary
+
+echo '>>>>>>>>>>>>>> Push user image'
+kind load docker-image hugio/fe:app_user
+
 echo '>>>>>>>>>>>>>> Deploy shell image'
 kubectl apply -f ./deploy/shell/k8s -n frontend
 
@@ -45,6 +66,15 @@ kubectl apply -f ./deploy/summary/k8s -n frontend
 echo '>>>>>>>>>>>>>> Deploy user image'
 kubectl apply -f ./deploy/user/k8s -n frontend
 
+echo '>>>>>>>>>>>>>> Clean kind image'
+sleep 5s
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_shell
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_analysis
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_auth
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_cashbook
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_product
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_summary
+docker exec -it kind-control-plane crictl rmi hugio/fe:app_user
 
 echo '>>>>>>>>>>>>>> Clean image'
 docker images | grep hugio | awk '{print $3}' | xargs docker rmi -f
