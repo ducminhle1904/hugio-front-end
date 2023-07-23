@@ -46,24 +46,31 @@ echo '>>>>>>>>>>>>>> Push user image'
 kind load docker-image hugio/fe:app_user
 
 echo '>>>>>>>>>>>>>> Deploy shell image'
+kubectl delete -f ./deploy/shell/k8s -n frontend
 kubectl apply -f ./deploy/shell/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Deploy analysis image'
+kubectl delete -f ./deploy/analysis/k8s -n frontend
 kubectl apply -f ./deploy/analysis/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Deploy auth image'
+kubectl delete -f ./deploy/auth/k8s -n frontend
 kubectl apply -f ./deploy/auth/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Deploy cashbook image'
+kubectl delete -f ./deploy/cashbook/k8s -n frontend
 kubectl apply -f ./deploy/cashbook/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Deploy product image'
+kubectl delete -f ./deploy/product/k8s -n frontend
 kubectl apply -f ./deploy/product/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Deploy summary image'
+kubectl delete -f ./deploy/summary/k8s -n frontend
 kubectl apply -f ./deploy/summary/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Deploy user image'
+kubectl delete -f ./deploy/user/k8s -n frontend
 kubectl apply -f ./deploy/user/k8s -n frontend
 
 echo '>>>>>>>>>>>>>> Clean kind image'
