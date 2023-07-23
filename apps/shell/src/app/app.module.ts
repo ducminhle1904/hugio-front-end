@@ -1,6 +1,6 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { PreloadAllModules, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { appRoutes } from './app.routes';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
@@ -35,7 +35,9 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
   declarations: [AppComponent, LayoutComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, {
+      preloadingStrategy: PreloadAllModules,
+    }),
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
