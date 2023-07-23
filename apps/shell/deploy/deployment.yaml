@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hugio-app-shell
+spec:
+  selector:
+    matchLabels:
+      app: hugio-app-shell
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hugio-app-shell
+    spec:
+      containers:
+        - name: hugio-app-shell
+          image: hugio/fe:app_shell
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 90
+          env:
+            - name: TZ
+              value: 'Asia/Ho_Chi_Minh'
