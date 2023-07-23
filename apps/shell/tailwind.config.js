@@ -12,7 +12,10 @@ module.exports = {
     join(__dirname, '../remotes/summary/src/**/!(*.stories|*.spec).{ts,html}'),
     join(__dirname, '../remotes/user/src/**/!(*.stories|*.spec).{ts,html}'),
     join(__dirname, '../remotes/auth/src/**/!(*.stories|*.spec).{ts,html}'),
-    join(__dirname, '../../libs/ui/src/lib/**/!(*.stories|*.spec).{ts,html}'),
+    join(
+      __dirname,
+      '../../libs/feature/src/lib/**/!(*.stories|*.spec).{ts,html}'
+    ),
   ],
   theme: {
     extend: {},
