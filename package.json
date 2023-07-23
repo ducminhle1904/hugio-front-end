@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve shell",
-    "build": "nx build shell --configuration=production",
+    "build": "nx run-many --targets=build --all",
     "test": "nx test",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
