@@ -186,7 +186,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   fb = inject(UntypedFormBuilder);
   productService = inject(ProductService);
   messageService = inject(NzMessageService);
-  modalRef = inject(NzModalRef<ProductDialogComponent>);
+  // modalRef = inject(NzModalRef<ProductDialogComponent>);
 
   @Input() productData!: Product;
   @Input() modalType = 'Create';
@@ -199,6 +199,8 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public listOfCategory$ = this.productService.queryListCategory();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
+
+  constructor(private modalRef: NzModalRef<ProductDialogComponent>) {}
 
   ngOnInit(): void {
     this.initForm(this.productData);
