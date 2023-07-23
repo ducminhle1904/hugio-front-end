@@ -17,7 +17,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { Product } from '@ims/core';
+import { Category, Product } from '@ims/core';
 import { ProductService } from '@ims/data-access';
 
 @Component({
@@ -129,10 +129,7 @@ import { ProductService } from '@ims/data-access';
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
-      <nz-form-item
-        class="justify-between"
-        *ngIf="listOfCategory$ | async as categories"
-      >
+      <nz-form-item class="justify-between">
         <nz-form-label
           class="text-left"
           [nzSm]="10"
@@ -157,7 +154,7 @@ import { ProductService } from '@ims/data-access';
             class="w-full"
           >
             <nz-option
-              *ngFor="let item of categories"
+              *ngFor="let item of listOfCategory"
               [nzLabel]="item.category_name"
               [nzValue]="item.category_name"
             ></nz-option>
@@ -196,12 +193,13 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public formatterDollar = (value: number): string => `$ ${value}`;
   public parserDollar = (value: string): string => value.replace('$ ', '');
 
-  public listOfCategory$ = this.productService.queryListCategory();
+  public listOfCategory: Category[] = [];
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
     this.initForm(this.productData);
+    this.getListCategory();
   }
 
   public handleSubmit(): void {
@@ -247,6 +245,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   private handleUpdate() {
     this.productService
       .updateProduct({
@@ -291,6 +290,15 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
         [Validators.required],
       ],
     });
+  }
+
+  private getListCategory() {
+    this.productService
+      .queryListCategory()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.listOfCategory = data;
+      });
   }
 
   ngOnDestroy() {

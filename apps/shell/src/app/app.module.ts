@@ -35,7 +35,9 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
   declarations: [AppComponent, LayoutComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, {
+      preloadingStrategy: PreloadAllModules,
+    }),
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
