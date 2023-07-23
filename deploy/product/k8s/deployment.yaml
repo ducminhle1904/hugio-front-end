@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hugio-app-auth
+  name: hugio-app-product
 spec:
   selector:
     matchLabels:
-      app: hugio-app-auth
+      app: hugio-app-product
   replicas: 1
   template:
     metadata:
       labels:
-        app: hugio-app-auth
+        app: hugio-app-product
     spec:
       containers:
-        - name: hugio-app-auth
-          image: hugio/fe:app_auth
+        - name: hugio-app-product
+          image: hugio/fe:app_product
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 90
