@@ -143,7 +143,7 @@ import { ProductService } from '@ims/data-access';
           [nzSm]="14"
           [nzXs]="24"
           nzErrorTip="Please choose product category!"
-          ngIf="listOfCategory"
+          *ngIf="listOfCategory"
         >
           <nz-select
             [nzMaxTagCount]="3"
