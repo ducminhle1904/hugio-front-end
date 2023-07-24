@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   Category,
   CategoryResponse,
@@ -14,7 +14,7 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root',
 })
 export class ProductService {
-  http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
   public queryListProduct(): Observable<ProductResponse> {
     return this.http.post<ProductResponse>('/product_service/product/all', {
