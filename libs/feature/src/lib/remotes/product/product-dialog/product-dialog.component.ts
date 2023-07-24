@@ -285,11 +285,11 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
           productData?.product_quantity || 1,
           [Validators.required],
         ],
-        // category: [
-        //   productData?.categories.map((category) => category.category_name) ||
-        //     null,
-        //   [Validators.required],
-        // ],
+        category: [
+          productData?.categories.map((category) => category.category_name) ||
+            null,
+          [Validators.required],
+        ],
       });
     } else {
       this.validateForm = this.fb.group({
@@ -297,7 +297,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
         price: [100, [Validators.required]],
         product_description: [null, [Validators.required]],
         product_quantity: [1, [Validators.required]],
-        // category: [null, [Validators.required]],
+        category: [null, [Validators.required]],
       });
     }
   }
@@ -307,7 +307,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
       .queryListCategory()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
-        this.listOfCategory = data;
+        this.listOfCategory = data.response.content;
       });
   }
 

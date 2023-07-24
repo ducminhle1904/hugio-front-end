@@ -1,14 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
-  Category,
   CategoryResponse,
   ProductCreateRequest,
   ProductResponse,
   ProductUpdateRequest,
   ResponseModel,
 } from '@ims/core';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -27,20 +26,14 @@ export class ProductService {
     });
   }
 
-  public queryListCategory(): Observable<Category[]> {
-    return this.http
-      .post<CategoryResponse>('/product_service/category/all', {
-        request: {
-          page_number: 1,
-          page_size: 100,
-          sort: 'ASC',
-        },
-      })
-      .pipe(
-        map((response) => {
-          return response.response.content;
-        })
-      );
+  public queryListCategory(): Observable<CategoryResponse> {
+    return this.http.post<CategoryResponse>('/product_service/category/all', {
+      request: {
+        page_number: 1,
+        page_size: 100,
+        sort: 'ASC',
+      },
+    });
   }
 
   public createProduct(
