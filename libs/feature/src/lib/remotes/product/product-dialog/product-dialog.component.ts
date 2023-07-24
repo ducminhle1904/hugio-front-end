@@ -180,15 +180,15 @@ import { ProductService } from '@ims/data-access';
   styles: [],
 })
 export class ProductDialogComponent implements OnInit, OnDestroy {
-  fb = inject(UntypedFormBuilder);
-  // productService = inject(ProductService);
+  // fb = inject(UntypedFormBuilder);
+  productService = inject(ProductService);
   messageService = inject(NzMessageService);
   modalRef = inject(NzModalRef<ProductDialogComponent>);
 
   @Input() productData!: Product;
   @Input() modalType = 'Create';
 
-  constructor(private productService: ProductService) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   public validateForm!: UntypedFormGroup;
 
