@@ -129,7 +129,10 @@ import { ProductService } from '@ims/data-access';
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
-      <nz-form-item class="justify-between" *ngIf="listOfCategory.length > 0">
+      <nz-form-item
+        class="justify-between"
+        *ngIf="listOfCategory$ | async as categories"
+      >
         <nz-form-label
           class="text-left"
           [nzSm]="10"
@@ -151,10 +154,9 @@ import { ProductService } from '@ims/data-access';
             nzPlaceHolder="Please select category"
             id="category"
             formControlName="category"
-            class="w-full"
           >
             <nz-option
-              *ngFor="let item of listOfCategory"
+              *ngFor="let item of categories"
               [nzLabel]="item.category_name"
               [nzValue]="item.category_name"
             ></nz-option>
@@ -193,12 +195,11 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public formatterDollar = (value: number): string => `$ ${value}`;
   public parserDollar = (value: string): string => value.replace('$ ', '');
 
-  public listOfCategory: Category[] = [];
+  public listOfCategory$ = this.productService.queryListCategory();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
-    this.getListCategory();
     this.initForm(this.productData);
   }
 
@@ -302,19 +303,19 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getListCategory() {
-    this.productService
-      .queryListCategory()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe({
-        next: (data) => {
-          this.listOfCategory = data.response.content;
-        },
-        error: (e) => {
-          console.log(e);
-        },
-      });
-  }
+  // private getListCategory() {
+  //   this.productService
+  //     .queryListCategory()
+  //     .pipe(takeUntil(this.unsubscribe$))
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.listOfCategory = data.response.content;
+  //       },
+  //       error: (e) => {
+  //         console.log(e);
+  //       },
+  //     });
+  // }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
