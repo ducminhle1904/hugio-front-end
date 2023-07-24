@@ -199,8 +199,8 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
-    this.initForm(this.productData);
     this.getListCategory();
+    this.initForm(this.productData);
   }
 
   public handleSubmit(): void {
@@ -307,8 +307,13 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
     this.productService
       .queryListCategory()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((data) => {
-        this.listOfCategory = data.response.content;
+      .subscribe({
+        next: (data) => {
+          this.listOfCategory = data.response.content;
+        },
+        error: (e) => {
+          console.log(e);
+        },
       });
   }
 
