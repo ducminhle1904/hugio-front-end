@@ -129,7 +129,7 @@ import { ProductService } from '@ims/data-access';
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
-      <nz-form-item class="justify-between">
+      <!-- <nz-form-item class="justify-between">
         <nz-form-label
           class="text-left"
           [nzSm]="10"
@@ -163,7 +163,7 @@ import { ProductService } from '@ims/data-access';
             >and {{ selectedList.length }} more selected</ng-template
           >
         </nz-form-control>
-      </nz-form-item>
+      </nz-form-item> -->
     </form>
     <div class="flex gap-2 justify-end">
       <button nz-button nzType="default" (click)="onClose()">Cancel</button>
