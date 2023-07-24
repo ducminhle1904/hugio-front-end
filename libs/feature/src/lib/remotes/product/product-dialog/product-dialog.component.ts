@@ -13,7 +13,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -195,9 +195,13 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public formatterDollar = (value: number): string => `$ ${value}`;
   public parserDollar = (value: string): string => value.replace('$ ', '');
 
-  public listOfCategory$ = this.productService.queryListCategory();
+  public listOfCategory$: Observable<Category[]>;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
+
+  constructor() {
+    this.listOfCategory$ = this.productService.queryListCategory();
+  }
 
   ngOnInit(): void {
     this.initForm(this.productData);
