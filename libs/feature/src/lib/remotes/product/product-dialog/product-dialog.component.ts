@@ -18,8 +18,7 @@ import { takeUntil } from 'rxjs/operators';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { Category, Product } from '@ims/core';
-import { ProductService } from '../product.service';
-// import { ProductService } from '@ims/data-access';
+import { ProductService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-product-dialog',
@@ -274,23 +273,33 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   }
 
   private initForm(productData: Product): void {
-    this.validateForm = this.fb.group({
-      name: [productData?.product_name || null, [Validators.required]],
-      price: [productData?.price || 100, [Validators.required]],
-      product_description: [
-        productData?.product_description || null,
-        [Validators.required],
-      ],
-      product_quantity: [
-        productData?.product_quantity || 1,
-        [Validators.required],
-      ],
-      category: [
-        productData?.categories.map((category) => category.category_name) ||
-          null,
-        [Validators.required],
-      ],
-    });
+    if (productData && this.modalType === 'Update') {
+      this.validateForm = this.fb.group({
+        name: [productData?.product_name || null, [Validators.required]],
+        price: [productData?.price || 100, [Validators.required]],
+        product_description: [
+          productData?.product_description || null,
+          [Validators.required],
+        ],
+        product_quantity: [
+          productData?.product_quantity || 1,
+          [Validators.required],
+        ],
+        category: [
+          productData?.categories.map((category) => category.category_name) ||
+            null,
+          [Validators.required],
+        ],
+      });
+    } else {
+      this.validateForm = this.fb.group({
+        name: [null, [Validators.required]],
+        price: [100, [Validators.required]],
+        product_description: [null, [Validators.required]],
+        product_quantity: [1, [Validators.required]],
+        category: [null, [Validators.required]],
+      });
+    }
   }
 
   private getListCategory() {
