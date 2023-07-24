@@ -198,7 +198,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
-    // this.getListCategory();
+    this.getListCategory();
     this.initForm(this.productData);
   }
 
