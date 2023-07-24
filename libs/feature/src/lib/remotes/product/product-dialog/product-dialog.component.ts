@@ -129,7 +129,7 @@ import { ProductService } from '@ims/data-access';
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
-      <!-- <nz-form-item
+      <nz-form-item
         class="justify-between"
         *ngIf="listOfCategory$ | async as categories"
       >
@@ -142,7 +142,7 @@ import { ProductService } from '@ims/data-access';
         >
           <span>Product category</span>
         </nz-form-label>
-        <nz-form-control
+        <!-- <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
           nzErrorTip="Please choose product category!"
@@ -164,8 +164,8 @@ import { ProductService } from '@ims/data-access';
           <ng-template #tagPlaceHolder let-selectedList
             >and {{ selectedList.length }} more selected</ng-template
           >
-        </nz-form-control>
-      </nz-form-item> -->
+        </nz-form-control> -->
+      </nz-form-item>
     </form>
     <div class="flex gap-2 justify-end">
       <button nz-button nzType="default" (click)="onClose()">Cancel</button>
