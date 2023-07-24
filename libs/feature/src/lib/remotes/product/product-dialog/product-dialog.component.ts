@@ -13,7 +13,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -129,7 +129,7 @@ import { ProductService } from '@ims/data-access';
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
-      <nz-form-item
+      <!-- <nz-form-item
         class="justify-between"
         *ngIf="listOfCategory$ | async as categories"
       >
@@ -165,7 +165,7 @@ import { ProductService } from '@ims/data-access';
             >and {{ selectedList.length }} more selected</ng-template
           >
         </nz-form-control>
-      </nz-form-item>
+      </nz-form-item> -->
     </form>
     <div class="flex gap-2 justify-end">
       <button nz-button nzType="default" (click)="onClose()">Cancel</button>
@@ -195,13 +195,9 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public formatterDollar = (value: number): string => `$ ${value}`;
   public parserDollar = (value: string): string => value.replace('$ ', '');
 
-  public listOfCategory$: Observable<Category[]>;
+  public listOfCategory$ = this.productService.queryListCategory();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
-
-  constructor() {
-    this.listOfCategory$ = this.productService.queryListCategory();
-  }
 
   ngOnInit(): void {
     this.initForm(this.productData);
