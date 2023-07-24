@@ -139,7 +139,7 @@ import { ProductService } from '@ims/data-access';
         >
           <span>Product category</span>
         </nz-form-label>
-        <nz-form-control
+        <!-- <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
           nzErrorTip="Please choose product category!"
@@ -162,7 +162,7 @@ import { ProductService } from '@ims/data-access';
           <ng-template #tagPlaceHolder let-selectedList
             >and {{ selectedList.length }} more selected</ng-template
           >
-        </nz-form-control>
+        </nz-form-control> -->
       </nz-form-item>
     </form>
     <div class="flex gap-2 justify-end">
@@ -180,15 +180,13 @@ import { ProductService } from '@ims/data-access';
   styles: [],
 })
 export class ProductDialogComponent implements OnInit, OnDestroy {
-  // fb = inject(UntypedFormBuilder);
+  fb = inject(UntypedFormBuilder);
   productService = inject(ProductService);
   messageService = inject(NzMessageService);
   modalRef = inject(NzModalRef<ProductDialogComponent>);
 
   @Input() productData!: Product;
   @Input() modalType = 'Create';
-
-  constructor(private fb: UntypedFormBuilder) {}
 
   public validateForm!: UntypedFormGroup;
 
@@ -287,11 +285,11 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
           productData?.product_quantity || 1,
           [Validators.required],
         ],
-        category: [
-          productData?.categories.map((category) => category.category_name) ||
-            null,
-          [Validators.required],
-        ],
+        // category: [
+        //   productData?.categories.map((category) => category.category_name) ||
+        //     null,
+        //   [Validators.required],
+        // ],
       });
     } else {
       this.validateForm = this.fb.group({
@@ -299,7 +297,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
         price: [100, [Validators.required]],
         product_description: [null, [Validators.required]],
         product_quantity: [1, [Validators.required]],
-        category: [null, [Validators.required]],
+        // category: [null, [Validators.required]],
       });
     }
   }
