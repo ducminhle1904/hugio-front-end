@@ -154,7 +154,6 @@ import { ProductService } from '@ims/data-access';
             nzPlaceHolder="Please select category"
             id="category"
             formControlName="category"
-            *ngIf="categories"
           >
             <nz-option
               *ngFor="let item of categories"
@@ -184,7 +183,7 @@ import { ProductService } from '@ims/data-access';
 })
 export class ProductDialogComponent implements OnInit, OnDestroy {
   fb = inject(UntypedFormBuilder);
-  productService = inject(ProductService);
+  // productService = inject(ProductService);
   messageService = inject(NzMessageService);
   modalRef = inject(NzModalRef<ProductDialogComponent>);
 
@@ -199,6 +198,8 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public listOfCategory$ = this.productService.queryListCategory();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
+
+  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.initForm(this.productData);
