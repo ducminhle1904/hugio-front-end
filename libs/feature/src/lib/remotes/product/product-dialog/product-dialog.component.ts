@@ -143,7 +143,6 @@ import { ProductService } from '@ims/data-access';
           [nzSm]="14"
           [nzXs]="24"
           nzErrorTip="Please choose product category!"
-          *ngIf="listOfCategory"
         >
           <nz-select
             [nzMaxTagCount]="3"
@@ -199,7 +198,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
-    this.getListCategory();
+    // this.getListCategory();
     this.initForm(this.productData);
   }
 
