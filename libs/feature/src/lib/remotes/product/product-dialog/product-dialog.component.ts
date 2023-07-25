@@ -203,7 +203,7 @@ export class ProductDialogComponent implements OnInit {
 
   public listOfCategory$ = this.productService.queryListCategory();
 
-  constructor(@Self() @Optional() private productService: ProductService) {}
+  constructor(@Optional() private productService: ProductService) {}
 
   ngOnInit(): void {
     this.initForm(this.productData);
