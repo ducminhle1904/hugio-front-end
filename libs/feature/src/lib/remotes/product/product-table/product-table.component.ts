@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewContainerRef } from '@angular/core';
 import { LoadingService, Product } from '@ims/core';
 import { ProductService } from '@ims/data-access';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -102,6 +102,7 @@ export class ProductTableComponent implements OnInit {
   modalService = inject(NzModalService);
   notiService = inject(NzNotificationService);
   loadingService = inject(LoadingService);
+  viewContainerRef = inject(ViewContainerRef);
 
   public listOfProduct: Product[] = [];
   public loading$ = this.loadingService.isLoading();
@@ -114,7 +115,11 @@ export class ProductTableComponent implements OnInit {
     const modalRef: NzModalRef = this.modalService.create({
       nzTitle: 'Create product',
       nzContent: ProductDialogComponent,
+      nzViewContainerRef: this.viewContainerRef,
       nzFooter: null,
+      nzData: {
+        modalType: 'Create',
+      },
     });
     modalRef.afterClose.subscribe((isSuccessCreate) => {
       isSuccessCreate && this.getListProduct();
@@ -125,8 +130,9 @@ export class ProductTableComponent implements OnInit {
     const modalRef: NzModalRef = this.modalService.create({
       nzTitle: 'Update product',
       nzContent: ProductDialogComponent,
+      nzViewContainerRef: this.viewContainerRef,
       nzFooter: null,
-      nzComponentParams: {
+      nzData: {
         productData: product,
         modalType: 'Update',
       },

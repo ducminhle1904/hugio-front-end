@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -15,7 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -174,20 +174,19 @@ import { distinctUntilChanged } from 'rxjs/operators';
         (click)="handleSubmit()"
         class="flex items-center mb-2"
       >
-        {{ modalType }} Product
+        {{ nzModalData.modalType }} Product
       </button>
     </div>
   `,
   styles: [],
 })
 export class ProductDialogComponent implements OnInit {
-  fb = inject(UntypedFormBuilder);
-  productService = inject(ProductService);
-  messageService = inject(NzMessageService);
-  modalRef = inject(NzModalRef<ProductDialogComponent>);
-
-  @Input() productData!: Product;
-  @Input() modalType = 'Create';
+  readonly fb = inject(UntypedFormBuilder);
+  readonly productService = inject(ProductService);
+  readonly messageService = inject(NzMessageService);
+  readonly modalRef = inject(NzModalRef<ProductDialogComponent>);
+  readonly nzModalData: { productData: Product; modalType: string } =
+    inject(NZ_MODAL_DATA);
 
   public validateForm!: UntypedFormGroup;
 
@@ -197,12 +196,12 @@ export class ProductDialogComponent implements OnInit {
   public listOfCategory$ = this.productService.queryListCategory();
 
   ngOnInit(): void {
-    this.initForm(this.productData);
+    this.initForm(this.nzModalData?.productData);
   }
 
   public handleSubmit(): void {
     if (this.validateForm.valid) {
-      if (this.modalType === 'Create') {
+      if (this.nzModalData.modalType === 'Create') {
         this.handleCreate();
       } else {
         this.handleUpdate();
@@ -248,7 +247,7 @@ export class ProductDialogComponent implements OnInit {
     this.productService
       .updateProduct({
         ...this.validateForm.value,
-        product_uid: this.productData.product_uid,
+        product_uid: this.nzModalData.productData.product_uid,
       })
       .pipe(distinctUntilChanged())
       .subscribe({
