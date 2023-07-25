@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { LoadingService, Product } from '@ims/core';
+import { ProductService } from '@ims/data-access';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -11,9 +12,8 @@ import {
 } from 'ng-zorro-antd/notification';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { Subject, takeUntil } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
-import { ProductService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-product-table',
@@ -97,7 +97,7 @@ import { ProductService } from '@ims/data-access';
   `,
   styles: [],
 })
-export class ProductTableComponent implements OnInit, OnDestroy {
+export class ProductTableComponent implements OnInit {
   productService = inject(ProductService);
   modalService = inject(NzModalService);
   notiService = inject(NzNotificationService);
@@ -105,7 +105,6 @@ export class ProductTableComponent implements OnInit, OnDestroy {
 
   public listOfProduct: Product[] = [];
   public loading$ = this.loadingService.isLoading();
-  private unsubscribe$: Subject<void> = new Subject<void>();
 
   ngOnInit(): void {
     this.getListProduct();
@@ -153,7 +152,7 @@ export class ProductTableComponent implements OnInit, OnDestroy {
     this.loadingService.setLoading(true);
     this.productService
       .queryListProduct()
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(distinctUntilChanged())
       .subscribe((data) => {
         this.listOfProduct = data.response.content;
         this.loadingService.setLoading(false);
@@ -163,7 +162,7 @@ export class ProductTableComponent implements OnInit, OnDestroy {
   private deleteProduct(product_id: string) {
     this.productService
       .deleteProduct(product_id)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(distinctUntilChanged())
       .subscribe({
         next: () => {
           this.notiService.create(
@@ -177,10 +176,5 @@ export class ProductTableComponent implements OnInit, OnDestroy {
           this.notiService.create('error', 'Fail to delete product', 'Failed');
         },
       });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -7,18 +7,18 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { Product } from '@ims/core';
+import { ProductService } from '@ims/data-access';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { NzModalRef } from 'ng-zorro-antd/modal';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { Category, Product } from '@ims/core';
-import { ProductService } from '@ims/data-access';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'ims-product-dialog',
@@ -181,9 +181,9 @@ import { ProductService } from '@ims/data-access';
   `,
   styles: [],
 })
-export class ProductDialogComponent implements OnInit, OnDestroy {
+export class ProductDialogComponent implements OnInit {
   fb = inject(UntypedFormBuilder);
-  // productService = inject(ProductService);
+  productService = inject(ProductService);
   messageService = inject(NzMessageService);
   modalRef = inject(NzModalRef<ProductDialogComponent>);
 
@@ -198,8 +198,6 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   public listOfCategory$ = this.productService.queryListCategory();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
-
-  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.initForm(this.productData);
@@ -229,7 +227,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   private handleCreate() {
     this.productService
       .createProduct(this.validateForm.value)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(distinctUntilChanged())
       .subscribe({
         next: (res) => {
           if (res.codeNumber === 0) {
@@ -255,7 +253,7 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
         ...this.validateForm.value,
         product_uid: this.productData.product_uid,
       })
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(distinctUntilChanged())
       .subscribe({
         next: (res) => {
           if (res.codeNumber === 0) {
@@ -276,51 +274,22 @@ export class ProductDialogComponent implements OnInit, OnDestroy {
   }
 
   private initForm(productData: Product): void {
-    if (productData && this.modalType === 'Update') {
-      this.validateForm = this.fb.group({
-        name: [productData?.product_name || null, [Validators.required]],
-        price: [productData?.price || 100, [Validators.required]],
-        product_description: [
-          productData?.product_description || null,
-          [Validators.required],
-        ],
-        product_quantity: [
-          productData?.product_quantity || 1,
-          [Validators.required],
-        ],
-        category: [
-          productData?.categories.map((category) => category.category_name) ||
-            null,
-          [Validators.required],
-        ],
-      });
-    } else {
-      this.validateForm = this.fb.group({
-        name: [null, [Validators.required]],
-        price: [100, [Validators.required]],
-        product_description: [null, [Validators.required]],
-        product_quantity: [1, [Validators.required]],
-        category: [null, [Validators.required]],
-      });
-    }
-  }
-
-  // private getListCategory() {
-  //   this.productService
-  //     .queryListCategory()
-  //     .pipe(takeUntil(this.unsubscribe$))
-  //     .subscribe({
-  //       next: (data) => {
-  //         this.listOfCategory = data.response.content;
-  //       },
-  //       error: (e) => {
-  //         console.log(e);
-  //       },
-  //     });
-  // }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+    this.validateForm = this.fb.group({
+      name: [productData?.product_name || null, [Validators.required]],
+      price: [productData?.price || 100, [Validators.required]],
+      product_description: [
+        productData?.product_description || null,
+        [Validators.required],
+      ],
+      product_quantity: [
+        productData?.product_quantity || 1,
+        [Validators.required],
+      ],
+      category: [
+        productData?.categories.map((category) => category.category_name) ||
+          null,
+        [Validators.required],
+      ],
+    });
   }
 }
