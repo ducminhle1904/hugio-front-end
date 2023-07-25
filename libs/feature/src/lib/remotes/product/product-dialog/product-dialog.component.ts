@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  Optional,
+  Self,
+  inject,
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -17,7 +24,6 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { Subject } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -183,7 +189,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 })
 export class ProductDialogComponent implements OnInit {
   fb = inject(UntypedFormBuilder);
-  productService = inject(ProductService);
+  // productService = inject(ProductService);
   messageService = inject(NzMessageService);
   modalRef = inject(NzModalRef<ProductDialogComponent>);
 
@@ -197,7 +203,7 @@ export class ProductDialogComponent implements OnInit {
 
   public listOfCategory$ = this.productService.queryListCategory();
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  constructor(@Self() @Optional() private productService: ProductService) {}
 
   ngOnInit(): void {
     this.initForm(this.productData);
