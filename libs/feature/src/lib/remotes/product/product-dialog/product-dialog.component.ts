@@ -16,6 +16,7 @@ import {
 } from '@angular/forms';
 import { Product } from '@ims/core';
 import { ProductService } from '@ims/data-access';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -40,6 +41,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
     NzButtonModule,
     FormsModule,
     ReactiveFormsModule,
+    NgSelectModule,
   ],
   template: `
     <form nz-form [formGroup]="validateForm">
@@ -135,10 +137,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
-      <nz-form-item
-        class="justify-between"
-        *ngIf="listOfCategory$ | async as categories"
-      >
+      <nz-form-item class="justify-between">
         <nz-form-label
           class="text-left"
           [nzSm]="10"
@@ -153,7 +152,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
           [nzXs]="24"
           nzErrorTip="Please choose product category!"
         >
-          <nz-select
+          <!-- <nz-select
             [nzMaxTagCount]="3"
             [nzMaxTagPlaceholder]="tagPlaceHolder"
             nzMode="multiple"
@@ -169,7 +168,15 @@ import { distinctUntilChanged } from 'rxjs/operators';
           </nz-select>
           <ng-template #tagPlaceHolder let-selectedList
             >and {{ selectedList.length }} more selected</ng-template
+          > --><ng-select
+            [items]="listOfCategory$ | async"
+            bindLabel="category_name"
+            autofocus
+            [multiple]="true"
+            bindValue="category_name"
+            formControlName="category"
           >
+          </ng-select>
         </nz-form-control>
       </nz-form-item>
     </form>
