@@ -14,6 +14,9 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { distinctUntilChanged } from 'rxjs';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { ProductDrawerComponent } from '../product-drawer/product-drawer.component';
 
 @Component({
   selector: 'ims-product-table',
@@ -27,6 +30,7 @@ import { ProductDialogComponent } from '../product-dialog/product-dialog.compone
     NzModalModule,
     NzNotificationModule,
     NzButtonModule,
+    NzDrawerModule,
   ],
   template: `
     <button
@@ -103,6 +107,7 @@ export class ProductTableComponent implements OnInit {
   notiService = inject(NzNotificationService);
   loadingService = inject(LoadingService);
   viewContainerRef = inject(ViewContainerRef);
+  drawerService = inject(NzDrawerService);
 
   public listOfProduct: Product[] = [];
   public loading$ = this.loadingService.isLoading();
@@ -112,17 +117,31 @@ export class ProductTableComponent implements OnInit {
   }
 
   public showModal() {
-    const modalRef: NzModalRef = this.modalService.create({
-      nzTitle: 'Create product',
-      nzContent: ProductDialogComponent,
-      nzViewContainerRef: this.viewContainerRef,
-      nzFooter: null,
-      nzData: {
-        modalType: 'Create',
-      },
+    // const modalRef: NzModalRef = this.modalService.create({
+    //   nzTitle: 'Create product',
+    //   nzContent: ProductDialogComponent,
+    //   nzViewContainerRef: this.viewContainerRef,
+    //   nzFooter: null,
+    //   nzData: {
+    //     modalType: 'Create',
+    //   },
+    // });
+    // modalRef.afterClose.subscribe((isSuccessCreate) => {
+    //   isSuccessCreate && this.getListProduct();
+    // });
+    const drawerRef = this.drawerService.create<
+      ProductDrawerComponent,
+      { value: string },
+      string
+    >({
+      nzTitle: 'Component',
+      nzFooter: 'Footer',
+      nzExtra: 'Extra',
+      nzContent: ProductDrawerComponent,
     });
-    modalRef.afterClose.subscribe((isSuccessCreate) => {
-      isSuccessCreate && this.getListProduct();
+
+    drawerRef.afterClose.subscribe((data) => {
+      console.log(data);
     });
   }
 

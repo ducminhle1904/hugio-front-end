@@ -15,7 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
-import { NZ_MODAL_DATA, NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -33,7 +33,6 @@ import { distinctUntilChanged } from 'rxjs/operators';
     NzButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    NzModalModule,
   ],
   template: `
     <form nz-form [formGroup]="validateForm">
