@@ -184,7 +184,7 @@ export class ProductDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly productService = inject(ProductService);
   readonly messageService = inject(NzMessageService);
-  readonly modalRef = inject(NzModalRef<ProductDialogComponent>);
+  readonly modalRef = inject(NzModalRef);
   readonly nzModalData: { productData: Product; modalType: string } =
     inject(NZ_MODAL_DATA);
 
