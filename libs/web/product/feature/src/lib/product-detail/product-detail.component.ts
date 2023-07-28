@@ -17,6 +17,7 @@ import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
+import { Category } from '@ims/core';
 
 @Component({
   selector: 'ims-product-dialog',
@@ -138,10 +139,7 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
             ></nz-input-number>
           </nz-form-control>
         </nz-form-item>
-        <nz-form-item
-          class="justify-between"
-          *ngIf="listOfCategory$ | async as categories"
-        >
+        <nz-form-item class="justify-between">
           <nz-form-label
             class="text-left"
             [nzSm]="10"
@@ -165,7 +163,7 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
               formControlName="category"
             >
               <nz-option
-                *ngFor="let item of categories"
+                *ngFor="let item of listOfCategory"
                 [nzLabel]="item.category_name"
                 [nzValue]="item.category_name"
               ></nz-option>
@@ -191,10 +189,11 @@ export class ProductDetailComponent implements OnInit {
   public formatterDollar = (value: number): string => `$ ${value}`;
   public parserDollar = (value: string): string => value.replace('$ ', '');
 
-  public listOfCategory$ = this.productService.queryListCategory();
+  public listOfCategory: Category[] = [];
 
   ngOnInit(): void {
     this.initForm();
+    this.getListCategory();
   }
 
   public onBack(): void {
@@ -260,6 +259,20 @@ export class ProductDetailComponent implements OnInit {
             'error',
             'There was an Error, please contact administrator'
           );
+        },
+      });
+  }
+
+  private getListCategory() {
+    this.productService
+      .queryListCategory()
+      .pipe(distinctUntilChanged())
+      .subscribe({
+        next: (res) => {
+          this.listOfCategory = res.response.content;
+        },
+        error: (e) => {
+          console.log(e);
         },
       });
   }
