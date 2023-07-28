@@ -16,7 +16,7 @@ import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
-import { Category } from '@ims/core';
+import { Category, Product } from '@ims/core';
 import { ProductService } from '../../data-access/product.service';
 
 @Component({
@@ -164,8 +164,8 @@ import { ProductService } from '../../data-access/product.service';
             >
               <nz-option
                 *ngFor="let item of listOfCategory"
-                [nzLabel]="item.category_name"
-                [nzValue]="item.category_name"
+                [nzLabel]="item.product_name"
+                [nzValue]="item.product_name"
               ></nz-option>
             </nz-select>
             <ng-template #tagPlaceHolder let-selectedList
@@ -189,7 +189,7 @@ export class ProductDetailComponent implements OnInit {
   public formatterDollar = (value: number): string => `$ ${value}`;
   public parserDollar = (value: string): string => value.replace('$ ', '');
 
-  public listOfCategory: Category[] = [];
+  public listOfCategory: Product[] = [];
 
   ngOnInit(): void {
     this.initForm();
@@ -265,7 +265,7 @@ export class ProductDetailComponent implements OnInit {
 
   private getListCategory() {
     this.productService
-      .queryListCategory()
+      .queryListProduct()
       .pipe(distinctUntilChanged())
       .subscribe({
         next: (res) => {
