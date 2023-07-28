@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoadingService, Product } from '@ims/core';
 import { ProductService } from '@ims/web/product/data-access';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import {
   NzNotificationModule,
   NzNotificationService,
@@ -13,10 +15,7 @@ import {
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { distinctUntilChanged } from 'rxjs';
-import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
-import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { ProductDrawerComponent } from '../product-drawer/product-drawer.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'ims-product-table',
@@ -31,13 +30,14 @@ import { ProductDrawerComponent } from '../product-drawer/product-drawer.compone
     NzNotificationModule,
     NzButtonModule,
     NzDrawerModule,
+    RouterModule,
   ],
   template: `
     <button
       nz-button
       nzType="primary"
-      (click)="showModal()"
-      class="flex items-center mb-2"
+      [routerLink]="['/remotes-product/create']"
+      class="flex items-center mb-4"
     >
       <span nz-icon nzType="plus" nzTheme="outline"></span>
       Create Product
@@ -102,12 +102,12 @@ import { ProductDrawerComponent } from '../product-drawer/product-drawer.compone
   styles: [],
 })
 export class ProductTableComponent implements OnInit {
-  productService = inject(ProductService);
-  modalService = inject(NzModalService);
-  notiService = inject(NzNotificationService);
-  loadingService = inject(LoadingService);
-  viewContainerRef = inject(ViewContainerRef);
-  drawerService = inject(NzDrawerService);
+  readonly productService = inject(ProductService);
+  readonly modalService = inject(NzModalService);
+  readonly notiService = inject(NzNotificationService);
+  readonly loadingService = inject(LoadingService);
+  readonly viewContainerRef = inject(ViewContainerRef);
+  readonly router = inject(Router);
 
   public listOfProduct: Product[] = [];
   public loading$ = this.loadingService.isLoading();
@@ -116,50 +116,7 @@ export class ProductTableComponent implements OnInit {
     this.getListProduct();
   }
 
-  public showModal() {
-    // const modalRef: NzModalRef = this.modalService.create({
-    //   nzTitle: 'Create product',
-    //   nzContent: ProductDialogComponent,
-    //   nzViewContainerRef: this.viewContainerRef,
-    //   nzFooter: null,
-    //   nzData: {
-    //     modalType: 'Create',
-    //   },
-    // });
-    // modalRef.afterClose.subscribe((isSuccessCreate) => {
-    //   isSuccessCreate && this.getListProduct();
-    // });
-    const drawerRef = this.drawerService.create<
-      ProductDrawerComponent,
-      { value: string },
-      string
-    >({
-      nzTitle: 'Component',
-      nzFooter: 'Footer',
-      nzExtra: 'Extra',
-      nzContent: ProductDrawerComponent,
-    });
-
-    drawerRef.afterClose.subscribe((data) => {
-      console.log(data);
-    });
-  }
-
-  public handleEdit(product: Product) {
-    const modalRef: NzModalRef = this.modalService.create({
-      nzTitle: 'Update product',
-      nzContent: ProductDialogComponent,
-      nzViewContainerRef: this.viewContainerRef,
-      nzFooter: null,
-      nzData: {
-        productData: product,
-        modalType: 'Update',
-      },
-    });
-    modalRef.afterClose.subscribe((isSuccessCreate) => {
-      isSuccessCreate && this.getListProduct();
-    });
-  }
+  public handleEdit(product: Product) {}
 
   public handleDelete(product: Product) {
     this.modalService.confirm({

@@ -18,6 +18,20 @@ export const remoteRoutes: Route[] = [
             (c) => c.ProductListComponent
           ),
       },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('@ims/web/product/feature').then(
+            (c) => c.ProductDetailComponent
+          ),
+      },
+      {
+        path: 'detail/:id',
+        loadComponent: () =>
+          import('@ims/web/product/feature').then(
+            (c) => c.ProductDetailComponent
+          ),
+      },
     ],
   },
 ];
