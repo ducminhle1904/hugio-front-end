@@ -14,21 +14,21 @@ export const remoteRoutes: Route[] = [
       {
         path: 'list',
         loadComponent: () =>
-          import('./modules/product-list/product-list.component').then(
-            (c) => c.ProductListComponent
+          import('./features/product-table/product-table.component').then(
+            (c) => c.ProductTableComponent
           ),
       },
       {
         path: 'create',
         loadComponent: () =>
-          import('@ims/web/product/feature').then(
+          import('./features/product-detail/product-detail.component').then(
             (c) => c.ProductDetailComponent
           ),
       },
       {
         path: 'detail/:id',
         loadComponent: () =>
-          import('@ims/web/product/feature').then(
+          import('./features/product-detail/product-detail.component').then(
             (c) => c.ProductDetailComponent
           ),
       },

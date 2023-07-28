@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingService, Product } from '@ims/core';
-import { ProductService } from '@ims/web/product/data-access';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -16,6 +15,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { distinctUntilChanged } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { ProductService } from '../../data-access/product.service';
 
 @Component({
   selector: 'ims-product-table',

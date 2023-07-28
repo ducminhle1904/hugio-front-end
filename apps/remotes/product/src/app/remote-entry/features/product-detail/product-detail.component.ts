@@ -7,7 +7,6 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ProductService } from '@ims/web/product/data-access';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -18,6 +17,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { Category } from '@ims/core';
+import { ProductService } from '../../data-access/product.service';
 
 @Component({
   selector: 'ims-product-dialog',
