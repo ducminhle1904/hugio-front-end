@@ -16,7 +16,6 @@ import {
   UserService,
 } from '@ims/core';
 import { EMPTY } from 'rxjs';
-import { LayoutComponent } from './components/layout.component';
 
 registerLocaleData(en);
 
@@ -25,7 +24,7 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
 }
 
 @NgModule({
-  declarations: [AppComponent, LayoutComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes, {

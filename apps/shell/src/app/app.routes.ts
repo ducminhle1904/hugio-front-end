@@ -1,9 +1,9 @@
 import { Route } from '@angular/router';
 import { AuthGuard, UserService } from '@ims/core';
 import { loadRemoteModule } from '@nx/angular/mf';
-import { LayoutComponent } from './components/layout.component';
 import { inject } from '@angular/core';
 import { map } from 'rxjs';
+import { LayoutComponent } from './components/layout/layout.component';
 
 export const appRoutes: Route[] = [
   {
@@ -63,7 +63,6 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-summary', './Module').then(
             (m) => m.RemoteEntryModule
           ),
-        canActivate: [AuthGuard],
       },
     ],
   },

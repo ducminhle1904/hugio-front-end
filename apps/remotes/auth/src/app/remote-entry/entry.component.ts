@@ -1,6 +1,11 @@
-import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '@ims/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'ims-auth-entry',
@@ -27,7 +32,11 @@ import { UserService } from '@ims/core';
         >
           Sign in to your account
         </h1>
-        <form class="space-y-4 md:space-y-6" action="#">
+        <form
+          class="space-y-4 md:space-y-6"
+          [formGroup]="validateForm"
+          (ngSubmit)="submitForm()"
+        >
           <div>
             <label
               htmlFor="username"
@@ -38,7 +47,7 @@ import { UserService } from '@ims/core';
               pInputText
               id="username"
               aria-describedby="username-help"
-              [(ngModel)]="username"
+              formControlName="username"
               class="w-full"
             />
           </div>
@@ -50,7 +59,7 @@ import { UserService } from '@ims/core';
             >
             <p-password
               id="password"
-              [(ngModel)]="password"
+              formControlName="password"
               [toggleMask]="true"
               [style]="{ width: '100%' }"
               [inputStyle]="{ width: '100%' }"
@@ -59,7 +68,7 @@ import { UserService } from '@ims/core';
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1">
               <p-checkbox
-                [(ngModel)]="rememberMe"
+                formControlName="remember"
                 [binary]="true"
                 inputId="remember"
               ></p-checkbox>
@@ -89,18 +98,13 @@ import { UserService } from '@ims/core';
   encapsulation: ViewEncapsulation.None,
 })
 export class RemoteEntryComponent implements OnInit {
-  public username!: string;
-  public password!: string;
-  public rememberMe = false;
+  validateForm!: UntypedFormGroup;
 
-  form: any = {
-    username: null,
-    password: null,
-  };
-  isSuccessful = false;
-  errorMessage = '';
-
-  constructor(private userService: UserService, private router: Router) {
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private fb: UntypedFormBuilder
+  ) {
     this.userService.isAuthenticated.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.router.navigate(['/remotes-summary']);
@@ -111,18 +115,34 @@ export class RemoteEntryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('ngOnInit');
+    this.initForm();
   }
 
-  onSubmit(): void {
-    this.userService.login(this.form).subscribe({
-      next: (data) => {
-        console.log(data);
-        this.isSuccessful = true;
-      },
-      error: (err) => {
-        this.errorMessage = err.error.message;
-      },
+  public submitForm(): void {
+    if (this.validateForm.valid) {
+      this.userService.login(this.validateForm.value).subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (e) => {
+          console.log(e);
+        },
+      });
+    } else {
+      Object.values(this.validateForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
+  private initForm() {
+    this.validateForm = this.fb.group({
+      username: [null, [Validators.required]],
+      password: [null, [Validators.required]],
+      remember: [true],
     });
   }
 }
