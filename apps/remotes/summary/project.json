@@ -19,10 +19,7 @@
           "apps/remotes/summary/src/favicon.ico",
           "apps/remotes/summary/src/assets"
         ],
-        "styles": [
-          "apps/shell/src/theme.less",
-          "apps/remotes/summary/src/styles.scss"
-        ],
+        "styles": ["apps/remotes/summary/src/styles.scss"],
         "scripts": [],
         "customWebpackConfig": {
           "path": "apps/remotes/summary/webpack.config.js"

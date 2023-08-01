@@ -5,10 +5,11 @@ import { RouterModule } from '@angular/router';
 import { RemoteEntryComponent } from './entry.component';
 import { remoteRoutes } from './entry.routes';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzCardModule } from 'ng-zorro-antd/card';
+
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { PasswordModule } from 'primeng/password';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [RemoteEntryComponent],
@@ -17,10 +18,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
     RouterModule.forChild(remoteRoutes),
     FormsModule,
     ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzButtonModule,
-    NzCardModule,
+    ButtonModule,
+    CheckboxModule,
+    PasswordModule,
+    InputTextModule,
   ],
   providers: [],
 })

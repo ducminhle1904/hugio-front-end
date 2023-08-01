@@ -20,7 +20,8 @@
             "prefix": "ims",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@angular-eslint/no-empty-lifecycle-method": ["off"]
       },
       "extends": [
         "plugin:@nx/angular",

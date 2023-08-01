@@ -17,10 +17,6 @@
     "paths": {
       "@ims/core": ["libs/core/src/index.ts"],
       "@ims/shared": ["libs/shared/src/index.ts"],
-      "@ims/web/product/data-access": [
-        "libs/web/product/data-access/src/index.ts"
-      ],
-      "@ims/web/product/feature": ["libs/web/product/feature/src/index.ts"],
       "@ims/web/user/data-access": ["libs/web/user/data-access/src/index.ts"],
       "@ims/web/user/feature": ["libs/web/user/feature/src/index.ts"]
     }

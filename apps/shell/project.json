@@ -15,16 +15,8 @@
         "main": "apps/shell/src/main.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/shell/tsconfig.app.json",
-        "assets": [
-          "apps/shell/src/favicon.ico",
-          "apps/shell/src/assets",
-          {
-            "glob": "**/*",
-            "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
-            "output": "/assets/"
-          }
-        ],
-        "styles": ["apps/shell/src/theme.less", "apps/shell/src/styles.scss"],
+        "assets": ["apps/shell/src/favicon.ico", "apps/shell/src/assets"],
+        "styles": ["apps/shell/src/styles.scss"],
         "scripts": [],
         "customWebpackConfig": {
           "path": "apps/shell/webpack.config.js"

@@ -19,10 +19,7 @@
           "apps/remotes/cashbook/src/favicon.ico",
           "apps/remotes/cashbook/src/assets"
         ],
-        "styles": [
-          "apps/shell/src/theme.less",
-          "apps/remotes/cashbook/src/styles.scss"
-        ],
+        "styles": ["apps/remotes/cashbook/src/styles.scss"],
         "scripts": [],
         "customWebpackConfig": {
           "path": "apps/remotes/cashbook/webpack.config.js"
