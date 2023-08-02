@@ -63,6 +63,7 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-summary', './Module').then(
             (m) => m.RemoteEntryModule
           ),
+        canActivate: [AuthGuard],
       },
     ],
   },

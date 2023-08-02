@@ -1,25 +1,23 @@
 import {
-  ChangeDetectorRef,
-  Component,
-  Host,
-  HostBinding,
-  Input,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import {
   animate,
   state,
   style,
   transition,
   trigger,
 } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostBinding,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
 import { MenuService } from './menu.service';
-import { LayoutService } from '../../service/layout.service';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -138,7 +136,6 @@ export class MenuitemComponent implements OnInit, OnDestroy {
   key = '';
 
   constructor(
-    public layoutService: LayoutService,
     private cd: ChangeDetectorRef,
     public router: Router,
     private menuService: MenuService

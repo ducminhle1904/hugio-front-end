@@ -1,6 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LayoutService } from '../../service/layout.service';
+import { Component, OnInit } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
 import { MenuitemComponent } from './menuitem.component';
 
@@ -23,15 +22,46 @@ import { MenuitemComponent } from './menuitem.component';
   styles: [],
 })
 export class SidebarComponent implements OnInit {
-  readonly layoutService = inject(LayoutService);
   model: any[] = [];
 
   ngOnInit() {
     this.model = [
       {
-        label: 'Home',
+        label: 'GENERAL',
         items: [
-          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+          {
+            label: 'Summary',
+            icon: 'pi pi-fw pi-th-large',
+            routerLink: ['/remotes-summary'],
+          },
+          {
+            label: 'Analysis',
+            icon: 'pi pi-fw pi-chart-bar',
+            routerLink: ['/remotes-analysis'],
+          },
+          {
+            label: 'Cashbook',
+            icon: 'pi pi-fw pi-wallet',
+            routerLink: ['/remotes-cashbook'],
+          },
+        ],
+      },
+      {
+        label: 'MANAGEMENT',
+        items: [
+          { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['/'] },
+          { label: 'Product', icon: 'pi pi-fw pi-inbox', routerLink: ['/'] },
+        ],
+      },
+      {
+        label: 'APP',
+        items: [
+          { label: 'Chat', icon: 'pi pi-fw pi-comments', routerLink: ['/'] },
+          {
+            label: 'Calendar',
+            icon: 'pi pi-fw pi-calendar',
+            routerLink: ['/'],
+          },
         ],
       },
     ];

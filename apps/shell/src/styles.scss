@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 /* You can add global styles to this file, and also import other style files */
-@import "primeng/resources/themes/lara-dark-indigo/theme.css";
+@import "primeng/resources/themes/viva-dark/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
+@import "assets/styles/layout/layout.scss";
+
 body {
   font-family: var(--font-family);
+}
+
+.layout-wrapper {
+  min-height: 100vh;
 }
