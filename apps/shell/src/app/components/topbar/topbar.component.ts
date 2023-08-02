@@ -10,7 +10,7 @@ import { MenuModule } from 'primeng/menu';
   standalone: true,
   imports: [CommonModule, RouterModule, AvatarModule, MenuModule],
   template: `<header>
-    <nav class="fixed w-full z-50 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+    <nav class="fixed w-full z-50 px-4 lg:px-6 py-2.5 bg-[#161d21]">
       <div class="flex flex-wrap justify-between items-center">
         <div class="flex items-center gap-5">
           <a href="https://flowbite.com" class="flex items-center">

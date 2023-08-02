@@ -11,13 +11,13 @@ export const remoteRoutes: Route[] = [
         redirectTo: '/list',
         pathMatch: 'full',
       },
-      // {
-      //   path: 'list',
-      //   loadComponent: () =>
-      //     import('./features/product-table/product-table.component').then(
-      //       (c) => c.ProductTableComponent
-      //     ),
-      // },
+      {
+        path: 'list',
+        loadComponent: () =>
+          import('@ims/web/product/features').then(
+            (c) => c.ProductListComponent
+          ),
+      },
       // {
       //   path: 'create',
       //   loadComponent: () =>
