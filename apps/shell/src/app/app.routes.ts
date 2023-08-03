@@ -31,6 +31,9 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-product', './Module').then(
             (m) => m.RemoteEntryModule
           ),
+        data: {
+          breadcrumb: 'Product',
+        },
         canActivate: [AuthGuard],
       },
       {
@@ -39,6 +42,9 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-user', './Module').then(
             (m) => m.RemoteEntryModule
           ),
+        data: {
+          breadcrumb: 'User',
+        },
         canActivate: [AuthGuard],
       },
       {
@@ -47,6 +53,9 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-cashbook', './Module').then(
             (m) => m.RemoteEntryModule
           ),
+        data: {
+          breadcrumb: 'Cashbook',
+        },
         canActivate: [AuthGuard],
       },
       {
@@ -55,6 +64,9 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-analysis', './Module').then(
             (m) => m.RemoteEntryModule
           ),
+        data: {
+          breadcrumb: 'Analysis',
+        },
         canActivate: [AuthGuard],
       },
       {
@@ -63,6 +75,9 @@ export const appRoutes: Route[] = [
           loadRemoteModule('remotes-summary', './Module').then(
             (m) => m.RemoteEntryModule
           ),
+        data: {
+          breadcrumb: 'Summary',
+        },
         canActivate: [AuthGuard],
       },
     ],

@@ -17,6 +17,9 @@ export const remoteRoutes: Route[] = [
           import('@ims/web/product/features').then(
             (c) => c.ProductListComponent
           ),
+        data: {
+          breadcrumb: 'Product List',
+        },
       },
       // {
       //   path: 'create',
@@ -24,6 +27,9 @@ export const remoteRoutes: Route[] = [
       //     import('./features/product-detail/product-detail.component').then(
       //       (c) => c.ProductDetailComponent
       //     ),
+      //     data: {
+      //       breadcrumb: "Product Create",
+      //     },
       // },
       // {
       //   path: 'detail/:id',
@@ -31,6 +37,9 @@ export const remoteRoutes: Route[] = [
       //     import('./features/product-detail/product-detail.component').then(
       //       (c) => c.ProductDetailComponent
       //     ),
+      //     data: {
+      //       breadcrumb: "Product Detail",
+      //     },
       // },
     ],
   },
