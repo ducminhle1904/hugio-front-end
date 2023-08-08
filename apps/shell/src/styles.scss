@@ -17,9 +17,7 @@ body {
   min-height: 100vh;
 }
 
-.content-container {
-  position: fixed;
-  overflow: auto;
-  height: calc(100vh - 7rem);
-  width: calc(100vw - 25rem);
+.toast {
+  transform: translateY(60px);
+  opacity: 1;
 }

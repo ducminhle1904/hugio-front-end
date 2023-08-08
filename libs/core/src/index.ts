@@ -9,6 +9,7 @@ export * from './lib/interceptor/token.interceptor';
 export * from './lib/services/jwt.service';
 export * from './lib/services/user.service';
 export * from './lib/services/loading.service';
+export * from './lib/services/layout.service';
 
 /* Guards */
 export * from './lib/guards/authentication.guard';
@@ -17,3 +18,6 @@ export * from './lib/guards/authentication.guard';
 export * from './lib/models/product.model';
 export * from './lib/models/response.model';
 export * from './lib/models/user.model';
+
+/* Utils */
+export * from './lib/utils/utils';

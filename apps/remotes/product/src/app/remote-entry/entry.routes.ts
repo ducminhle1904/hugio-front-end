@@ -14,12 +14,9 @@ export const remoteRoutes: Route[] = [
       {
         path: 'list',
         loadComponent: () =>
-          import('@ims/web/product/features').then(
+          import('./features/product-list/product-list.component').then(
             (c) => c.ProductListComponent
           ),
-        data: {
-          breadcrumb: 'Product List',
-        },
       },
       // {
       //   path: 'create',

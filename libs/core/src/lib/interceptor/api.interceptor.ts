@@ -5,8 +5,8 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { generateUUID } from '@ims/shared';
 import { Observable } from 'rxjs';
+import { generateUUID } from '../utils/utils';
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {

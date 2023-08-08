@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { UserService } from '@ims/core';
 import { SidebarComponent } from '../sidebar/sidebar.component';
-import { RouterModule } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'ims-layout',
@@ -16,30 +15,23 @@ import { CardModule } from 'primeng/card';
         <ims-sidebar></ims-sidebar>
       </div>
       <div class="p-4 ml-[22rem]">
-        <p-card styleClass="content-container mt-16">
+        <div class="content-container mt-16">
           <router-outlet></router-outlet>
-        </p-card>
+        </div>
       </div>
     </div>
   `,
   styles: [
     `
-      .p-card .p-card-body {
-        height: 100%;
-      }
-      .p-card .p-card-content {
-        height: 100%;
+      .content-container {
+        position: fixed;
+        overflow: auto;
+        height: calc(100vh - 7rem);
+        width: calc(100vw - 25rem);
       }
     `,
   ],
-  imports: [
-    CommonModule,
-    SidebarComponent,
-    RouterModule,
-    TopbarComponent,
-    CardModule,
-  ],
-  encapsulation: ViewEncapsulation.None,
+  imports: [CommonModule, SidebarComponent, RouterModule, TopbarComponent],
 })
 export class LayoutComponent {
   userService = inject(UserService);

@@ -32,7 +32,7 @@ export const appRoutes: Route[] = [
             (m) => m.RemoteEntryModule
           ),
         data: {
-          breadcrumb: 'Product',
+          title: 'Product',
         },
         canActivate: [AuthGuard],
       },
