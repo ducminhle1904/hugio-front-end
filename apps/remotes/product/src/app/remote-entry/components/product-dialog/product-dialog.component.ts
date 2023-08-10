@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -7,14 +7,15 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ProductService } from '../../services/product.service';
-import { Observable } from 'rxjs';
 import { Category } from '@ims/core';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { Observable } from 'rxjs';
+import { ProductService } from '../../services/product.service';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'ims-product-dialog',
@@ -27,6 +28,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
+    DynamicDialogModule,
   ],
   template: `<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <div class="flex flex-col gap-5">
@@ -111,6 +113,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
             id="categories"
             styleClass="w-full"
             optionValue="category_name"
+            appendTo="body"
           ></p-multiSelect>
         </div>
       </div>
@@ -122,12 +125,12 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
     </div>
   </form> `,
   styles: [],
-  providers: [DynamicDialogRef],
 })
 export class ProductDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly productService = inject(ProductService);
-  readonly dialogRef = inject(DynamicDialogRef);
+
+  @Output() closeModal = new EventEmitter<boolean>();
 
   readonly categories$: Observable<Category[]> =
     this.productService.queryListCategory();
@@ -142,10 +145,11 @@ export class ProductDialogComponent implements OnInit {
     if (this.validateForm.valid) {
       this.productService.createProduct(this.validateForm.value).subscribe({
         next: () => {
-          this.dialogRef.close();
+          this.validateForm.reset();
+          this.closeModal.emit(true);
         },
-        error: () => {
-          this.dialogRef.close(false);
+        error: (e) => {
+          console.log(e);
         },
       });
     } else {

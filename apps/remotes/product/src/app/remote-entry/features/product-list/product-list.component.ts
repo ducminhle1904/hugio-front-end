@@ -1,24 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { RatingModule } from 'primeng/rating';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { ProductService } from '../../services/product.service';
-import { Product } from '@ims/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Product } from '@ims/core';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
-import { MenuItem } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
+import { RatingModule } from 'primeng/rating';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import {
-  DialogService,
-  DynamicDialogModule,
-  DynamicDialogRef,
-} from 'primeng/dynamicdialog';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'ims-product-list',
@@ -34,9 +29,15 @@ import { ProductDialogComponent } from '../../components/product-dialog/product-
     ChipModule,
     ConfirmPopupModule,
     ToastModule,
-    DynamicDialogModule,
+    DialogModule,
+    ProductDialogComponent,
   ],
   template: ` <p-toast styleClass="toast"></p-toast>
+    <p-dialog header="Create product" [(visible)]="visible" [modal]="true">
+      <ims-product-dialog
+        (closeModal)="closeModal($event)"
+      ></ims-product-dialog>
+    </p-dialog>
     <p-card
       header="Product List"
       subheader="Take control of your inventory, prices, and insights with our intuitive product list management tools."
@@ -108,18 +109,16 @@ import { ProductDialogComponent } from '../../components/product-dialog/product-
       </div>
     </p-card>`,
   styles: [],
-  providers: [ConfirmationService, MessageService, DialogService],
+  providers: [ConfirmationService, MessageService],
 })
 export class ProductListComponent implements OnInit {
   readonly productService = inject(ProductService);
   readonly confirmationService = inject(ConfirmationService);
   readonly messageService = inject(MessageService);
-  readonly dialogService = inject(DialogService);
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
-
-  dialogRef: DynamicDialogRef | undefined;
+  public visible = false;
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -182,21 +181,14 @@ export class ProductListComponent implements OnInit {
   }
 
   public createProduct() {
-    this.dialogRef = this.dialogService.open(ProductDialogComponent, {
-      header: 'Create a Product',
-      width: '40vw',
-      contentStyle: { overflow: 'auto' },
-    });
+    this.visible = true;
+  }
 
-    this.dialogRef.onClose.subscribe((successCreate: boolean) => {
-      if (successCreate) {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Create product successfully',
-        });
-      }
-    });
+  public closeModal(state: boolean) {
+    if (state) {
+      this.visible = false;
+      this.fetchProducts();
+    }
   }
 
   public updateProduct() {
