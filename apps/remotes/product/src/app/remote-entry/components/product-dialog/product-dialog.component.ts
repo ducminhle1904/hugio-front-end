@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -7,15 +14,13 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Category } from '@ims/core';
+import { Category, Product } from '@ims/core';
 import { ButtonModule } from 'primeng/button';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Observable } from 'rxjs';
 import { ProductService } from '../../services/product.service';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'ims-product-dialog',
@@ -28,9 +33,8 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
-    DynamicDialogModule,
   ],
-  template: `<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+  template: `<form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <div class="flex flex-col gap-5">
       <div class="flex gap-3">
         <div class="flex flex-col gap-1 w-1/2">
@@ -41,7 +45,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
             pInputText
             id="name"
             aria-describedby="name-help"
-            formControlName="name"
+            formControlName="product_name"
           />
         </div>
         <div class="flex flex-col gap-1 w-1/2">
@@ -108,7 +112,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
           >
           <p-multiSelect
             [options]="categories"
-            formControlName="category"
+            formControlName="categories"
             optionLabel="category_name"
             id="categories"
             styleClass="w-full"
@@ -118,7 +122,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
         </div>
       </div>
       <p-button
-        label="Create"
+        [label]="modalType"
         type="submit"
         styleClass="p-button-success"
       ></p-button>
@@ -130,6 +134,18 @@ export class ProductDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly productService = inject(ProductService);
 
+  private _formData!: Product;
+  @Input() set formData(value: Product) {
+    this._formData = value;
+    if (this.validateForm && this._formData) {
+      this.validateForm.patchValue(this._formData); // Fill in form data
+    }
+  }
+  get formData(): Product {
+    return this._formData;
+  }
+
+  @Input() modalType = 'Create';
   @Output() closeModal = new EventEmitter<boolean>();
 
   readonly categories$: Observable<Category[]> =
@@ -143,15 +159,32 @@ export class ProductDialogComponent implements OnInit {
 
   public submitForm(): void {
     if (this.validateForm.valid) {
-      this.productService.createProduct(this.validateForm.value).subscribe({
-        next: () => {
-          this.validateForm.reset();
-          this.closeModal.emit(true);
-        },
-        error: (e) => {
-          console.log(e);
-        },
-      });
+      if (this.modalType === 'Create') {
+        this.productService.createProduct(this.validateForm.value).subscribe({
+          next: () => {
+            this.validateForm.reset();
+            this.closeModal.emit(true);
+          },
+          error: (e) => {
+            console.log(e);
+          },
+        });
+      } else {
+        this.productService
+          .updateProduct({
+            ...this.validateForm.value,
+            product_uid: this.formData.product_uid,
+          })
+          .subscribe({
+            next: () => {
+              this.validateForm.reset();
+              this.closeModal.emit(true);
+            },
+            error: (e) => {
+              console.log(e);
+            },
+          });
+      }
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -162,14 +195,18 @@ export class ProductDialogComponent implements OnInit {
     }
   }
 
+  public clearForm() {
+    this.validateForm.reset();
+  }
+
   private initForm() {
     this.validateForm = this.fb.group({
-      name: [null, [Validators.required]],
+      product_name: [null, [Validators.required]],
       product_description: [null, [Validators.required]],
       price: [null, [Validators.required]],
       discount: [null, [Validators.required]],
       product_quantity: [null, [Validators.required]],
-      category: [null, [Validators.required]],
+      categories: [null, [Validators.required]],
     });
   }
 }

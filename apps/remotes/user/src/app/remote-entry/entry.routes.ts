@@ -14,7 +14,7 @@ export const remoteRoutes: Route[] = [
       {
         path: 'list',
         loadComponent: () =>
-          import('./modules/user-list/user-list.component').then(
+          import('./features/user-list/user-list.component').then(
             (c) => c.UserListComponent
           ),
       },

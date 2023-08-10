@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Product } from '@ims/core';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -33,9 +33,17 @@ import { ProductService } from '../../services/product.service';
     ProductDialogComponent,
   ],
   template: ` <p-toast styleClass="toast"></p-toast>
-    <p-dialog header="Create product" [(visible)]="visible" [modal]="true">
+    <p-dialog
+      [header]="modalType === 'Create' ? 'Create product' : 'Update product'"
+      [(visible)]="modalVisible"
+      [modal]="true"
+      (onHide)="onHideModal()"
+    >
       <ims-product-dialog
+        [modalType]="modalType"
+        [formData]="updateProductData"
         (closeModal)="closeModal($event)"
+        #dialog
       ></ims-product-dialog>
     </p-dialog>
     <p-card
@@ -93,7 +101,7 @@ import { ProductService } from '../../services/product.service';
                   <p-button
                     icon="pi pi-pencil"
                     styleClass="p-button-sm p-button-info"
-                    (click)="updateProduct()"
+                    (click)="updateProduct(product)"
                   ></p-button>
                   <p-confirmPopup [key]="product.product_uid"></p-confirmPopup>
                   <p-button
@@ -118,7 +126,12 @@ export class ProductListComponent implements OnInit {
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
-  public visible = false;
+
+  public modalVisible = false;
+  public updateProductData: any;
+  public modalType = 'Create';
+
+  @ViewChild('dialog') productDialog: ProductDialogComponent | undefined;
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -181,18 +194,29 @@ export class ProductListComponent implements OnInit {
   }
 
   public createProduct() {
-    this.visible = true;
+    this.modalVisible = true;
+    this.modalType = 'Create';
   }
 
   public closeModal(state: boolean) {
     if (state) {
-      this.visible = false;
+      this.modalVisible = false;
       this.fetchProducts();
     }
   }
 
-  public updateProduct() {
-    console.log('updateProduct');
+  public onHideModal() {
+    this.productDialog?.clearForm();
+    this.updateProductData = {};
+  }
+
+  public updateProduct(product: Product) {
+    this.modalVisible = true;
+    this.modalType = 'Update';
+    this.updateProductData = {
+      ...product,
+      categories: product.categories.map((cate) => cate.category_name),
+    };
   }
 
   private fetchProducts(): void {

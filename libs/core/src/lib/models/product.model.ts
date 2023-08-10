@@ -56,11 +56,11 @@ export interface ProductCreateRequest {
 
 export interface ProductUpdateRequest {
   product_uid: string;
-  name: string;
+  product_name: string;
   price: number;
   discount: number;
   product_description: string;
-  category: string[];
+  categories: string[];
   details?: [
     {
       key: string;
