@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -14,12 +8,12 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { User } from '@ims/core';
 import { ButtonModule } from 'primeng/button';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { UserService } from '../../services/user.service';
 import { Observable } from 'rxjs';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'ims-user-dialog',
@@ -48,8 +42,6 @@ import { Observable } from 'rxjs';
             formControlName="user_name"
           />
         </div>
-      </div>
-      <div class="flex gap-3">
         <div class="flex flex-col gap-1 w-1/2">
           <label
             htmlFor="full_name"
@@ -63,6 +55,8 @@ import { Observable } from 'rxjs';
             formControlName="full_name"
           />
         </div>
+      </div>
+      <div class="flex gap-3">
         <div class="flex flex-col gap-1 w-1/2">
           <label htmlFor="email" class="block text-gray-300 text-sm font-bold"
             >Email</label
@@ -74,9 +68,6 @@ import { Observable } from 'rxjs';
             formControlName="email"
           />
         </div>
-      </div>
-
-      <div class="flex gap-3">
         <div class="flex flex-col gap-1 w-1/2">
           <label htmlFor="address" class="block text-gray-300 text-sm font-bold"
             >Address</label
@@ -88,7 +79,10 @@ import { Observable } from 'rxjs';
             formControlName="address"
           />
         </div>
-        <div class="flex flex-col gap-1 w-1/2" *ngIf="roles$ | async as roles">
+      </div>
+
+      <div class="flex gap-3">
+        <div class="flex flex-col gap-1 w-full" *ngIf="roles$ | async as roles">
           <label htmlFor="roles" class="block text-gray-300 text-sm font-bold"
             >Roles</label
           >
@@ -114,41 +108,40 @@ import { Observable } from 'rxjs';
 export class UserDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly userService = inject(UserService);
+  readonly ref = inject(DynamicDialogRef);
+  readonly destroyRef = inject(DestroyRef);
 
-  private _formData!: User;
-  @Input() set formData(value: User) {
-    this._formData = value;
-    if (this.validateForm && this._formData) {
-      this.validateForm.patchValue(this._formData); // Fill in form data
-    }
-  }
-  get formData(): User {
-    return this._formData;
-  }
-
-  @Input() modalType = 'Create';
-  @Output() closeModal = new EventEmitter<boolean>();
+  public modalType = 'Create';
 
   readonly roles$: Observable<string[]> = this.userService.queryListRole();
 
   validateForm!: UntypedFormGroup;
 
+  constructor(public modalConfig: DynamicDialogConfig) {}
+
   ngOnInit(): void {
     this.initForm();
+    this.modalType = this.modalConfig.data.type;
+    if (this.modalConfig.data.data) {
+      const user = this.modalConfig.data.data;
+      this.validateForm.patchValue(user);
+    }
   }
 
   public submitForm(): void {
     if (this.validateForm.valid) {
       if (this.modalType === 'Create') {
-        this.userService.createUser(this.validateForm.value).subscribe({
-          next: () => {
-            this.validateForm.reset();
-            this.closeModal.emit(true);
-          },
-          error: (e) => {
-            console.log(e);
-          },
-        });
+        this.userService
+          .createUser(this.validateForm.value)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.validateForm.reset();
+            },
+            error: (e) => {
+              console.log(e);
+            },
+          });
       }
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {

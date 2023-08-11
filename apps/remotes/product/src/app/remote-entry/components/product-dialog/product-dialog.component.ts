@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -128,6 +129,7 @@ export class ProductDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly productService = inject(ProductService);
   readonly ref = inject(DynamicDialogRef);
+  readonly destroyRef = inject(DestroyRef);
 
   readonly categories$: Observable<Category[]> =
     this.productService.queryListCategory();
@@ -154,20 +156,24 @@ export class ProductDialogComponent implements OnInit {
   public submitForm(): void {
     if (this.validateForm.valid) {
       if (this.modalType === 'Create') {
-        this.productService.createProduct(this.validateForm.value).subscribe({
-          next: () => {
-            this.ref.close(true);
-          },
-          error: (e) => {
-            console.log(e);
-          },
-        });
+        this.productService
+          .createProduct(this.validateForm.value)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.ref.close(true);
+            },
+            error: (e) => {
+              console.log(e);
+            },
+          });
       } else {
         this.productService
           .updateProduct({
             ...this.validateForm.value,
             product_uid: this.modalConfig.data.data.product_uid,
           })
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
               this.ref.close(true);
@@ -185,10 +191,6 @@ export class ProductDialogComponent implements OnInit {
         }
       });
     }
-  }
-
-  public clearForm() {
-    this.validateForm.reset();
   }
 
   private initForm() {

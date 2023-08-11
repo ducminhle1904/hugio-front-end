@@ -62,4 +62,12 @@ export class UserService {
       },
     });
   }
+
+  public activeUser(user_uid: string): Observable<any> {
+    return this.http.post<any>('/user_service/user/active', {
+      request: {
+        user_uid,
+      },
+    });
+  }
 }

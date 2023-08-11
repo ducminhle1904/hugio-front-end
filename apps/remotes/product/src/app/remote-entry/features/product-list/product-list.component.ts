@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  OnInit,
+  ViewEncapsulation,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Product } from '@ims/core';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -18,6 +24,7 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { ProductService } from '../../services/product.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ims-product-list',
@@ -37,77 +44,86 @@ import { ProductService } from '../../services/product.service';
     DynamicDialogModule,
   ],
   template: ` <p-toast styleClass="toast"></p-toast>
-    <p-card
-      header="Product List"
-      subheader="Take control of your inventory, prices, and insights with our intuitive product list management tools."
-      styleClass="h-full"
-    >
-      <div class="card">
-        <p-table [value]="products" styleClass="p-datatable-sm">
-          <ng-template pTemplate="caption">
-            <p-button
-              icon="pi pi-plus"
-              label="Add product"
-              styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
-              (click)="createProduct()"
-            ></p-button>
-          </ng-template>
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Category</th>
-              <th>Reviews</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-product>
-            <tr>
-              <td>{{ product.product_name }}</td>
-              <td>{{ product.price | currency : 'USD' }}</td>
-              <td>
-                <ng-container *ngFor="let category of product.categories">
-                  <p-chip
-                    [label]="category.category_name"
-                    styleClass="mx-1"
-                  ></p-chip>
-                </ng-container>
-              </td>
-              <td>
-                <p-rating
-                  [ngModel]="product.rating"
-                  [readonly]="true"
-                  [cancel]="false"
-                ></p-rating>
-              </td>
-              <td>
-                <p-tag
-                  [value]="quantityText(product.product_quantity)"
-                  [severity]="quantityStatus(product.product_quantity)"
-                ></p-tag>
-              </td>
-              <td>
-                <div class="flex gap-1">
-                  <p-button
-                    icon="pi pi-pencil"
-                    styleClass="p-button-sm p-button-info"
-                    (click)="updateProduct(product)"
-                  ></p-button>
-                  <p-confirmPopup [key]="product.product_uid"></p-confirmPopup>
-                  <p-button
-                    icon="pi pi-trash"
-                    styleClass="p-button-sm p-button-danger"
-                    (click)="confirm($event, product.product_uid)"
-                  ></p-button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
+    <p-card header="Product List" styleClass="h-full">
+      <p-table
+        [value]="products"
+        styleClass="p-datatable-sm"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <ng-template pTemplate="caption">
+          <p-button
+            icon="pi pi-plus"
+            label="Add product"
+            styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
+            (click)="createProduct()"
+          ></p-button>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Reviews</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td>{{ product.product_name }}</td>
+            <td>{{ product.price | currency : 'USD' }}</td>
+            <td>
+              <ng-container *ngFor="let category of product.categories">
+                <p-chip
+                  [label]="category.category_name"
+                  styleClass="mx-1"
+                ></p-chip>
+              </ng-container>
+            </td>
+            <td>
+              <p-rating
+                [ngModel]="product.rating"
+                [readonly]="true"
+                [cancel]="false"
+              ></p-rating>
+            </td>
+            <td>
+              <p-tag
+                [value]="quantityText(product.product_quantity)"
+                [severity]="quantityStatus(product.product_quantity)"
+              ></p-tag>
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-pencil"
+                  styleClass="p-button-sm p-button-info"
+                  (click)="updateProduct(product)"
+                ></p-button>
+                <p-confirmPopup [key]="product.product_uid"></p-confirmPopup>
+                <p-button
+                  icon="pi pi-trash"
+                  styleClass="p-button-sm p-button-danger"
+                  (click)="confirm($event, product.product_uid)"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </p-card>`,
-  styles: [],
+  styles: [
+    `
+      ::ng-deep .p-datatable-wrapper {
+        height: 60vh;
+      }
+    `,
+  ],
+  encapsulation: ViewEncapsulation.Emulated,
   providers: [ConfirmationService, MessageService, DialogService],
 })
 export class ProductListComponent implements OnInit {
@@ -115,6 +131,7 @@ export class ProductListComponent implements OnInit {
   readonly confirmationService = inject(ConfirmationService);
   readonly messageService = inject(MessageService);
   readonly dialogService = inject(DialogService);
+  readonly destroyRef = inject(DestroyRef);
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
@@ -152,23 +169,26 @@ export class ProductListComponent implements OnInit {
       key: product_uid,
       acceptButtonStyleClass: 'p-button-warning',
       accept: () => {
-        this.productService.deleteProduct(product_uid).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'info',
-              summary: 'Delete successfully',
-              detail: 'Product have been deleted',
-            });
-            this.fetchProducts();
-          },
-          error: (e) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error happend',
-              detail: e,
-            });
-          },
-        });
+        this.productService
+          .deleteProduct(product_uid)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.messageService.add({
+                severity: 'info',
+                summary: 'Delete successfully',
+                detail: 'Product have been deleted',
+              });
+              this.fetchProducts();
+            },
+            error: (e) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error happend',
+                detail: e,
+              });
+            },
+          });
       },
       reject: () => {
         this.messageService.add({
@@ -190,16 +210,18 @@ export class ProductListComponent implements OnInit {
       },
     });
 
-    this.ref.onClose.subscribe((success: boolean) => {
-      if (success) {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Successfully',
-          detail: 'Product have been created',
-        });
-        this.fetchProducts();
-      }
-    });
+    this.ref.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((success: boolean) => {
+        if (success) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Successfully',
+            detail: 'Product have been created',
+          });
+          this.fetchProducts();
+        }
+      });
   }
 
   public updateProduct(product: Product) {
@@ -213,21 +235,26 @@ export class ProductListComponent implements OnInit {
       },
     });
 
-    this.ref.onClose.subscribe((success: boolean) => {
-      if (success) {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Successfully',
-          detail: 'Product have been updated',
-        });
-        this.fetchProducts();
-      }
-    });
+    this.ref.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((success: boolean) => {
+        if (success) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Successfully',
+            detail: 'Product have been updated',
+          });
+          this.fetchProducts();
+        }
+      });
   }
 
   private fetchProducts(): void {
-    this.productService.queryListProduct().subscribe((data) => {
-      this.products = data.response.content;
-    });
+    this.productService
+      .queryListProduct()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        this.products = data.response.content;
+      });
   }
 }
