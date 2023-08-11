@@ -135,23 +135,20 @@ export class ProductDialogComponent implements OnInit {
   public validateForm!: UntypedFormGroup;
   public modalType = 'Create';
 
-  constructor(public modalConfig: DynamicDialogConfig) {
-    this.modalType = modalConfig.data.type;
-    if (modalConfig.data.data) {
-      const product = modalConfig.data.data;
-      this.validateForm.patchValue({
-        product_name: product.product_name,
-        product_description: product.product_description,
-        price: product.price,
-        discount: product.discount,
-        product_quantity: product.product_quantity,
-        categories: product.categories.map((item: any) => item.category_name),
-      });
-    }
-  }
+  constructor(public modalConfig: DynamicDialogConfig) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.modalType = this.modalConfig.data.type;
+    if (this.modalConfig.data.data) {
+      const product = this.modalConfig.data.data;
+      this.validateForm.patchValue({
+        ...product,
+        categories: product.categories.map(
+          (cate: Category) => cate.category_name
+        ),
+      });
+    }
   }
 
   public submitForm(): void {
