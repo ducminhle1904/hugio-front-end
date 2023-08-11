@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Product } from '@ims/core';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -7,7 +7,11 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { DialogModule } from 'primeng/dialog';
+import {
+  DialogService,
+  DynamicDialogModule,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -29,23 +33,10 @@ import { ProductService } from '../../services/product.service';
     ChipModule,
     ConfirmPopupModule,
     ToastModule,
-    DialogModule,
     ProductDialogComponent,
+    DynamicDialogModule,
   ],
   template: ` <p-toast styleClass="toast"></p-toast>
-    <p-dialog
-      [header]="modalType === 'Create' ? 'Create product' : 'Update product'"
-      [(visible)]="modalVisible"
-      [modal]="true"
-      (onHide)="onHideModal()"
-    >
-      <ims-product-dialog
-        [modalType]="modalType"
-        [formData]="updateProductData"
-        (closeModal)="closeModal($event)"
-        #dialog
-      ></ims-product-dialog>
-    </p-dialog>
     <p-card
       header="Product List"
       subheader="Take control of your inventory, prices, and insights with our intuitive product list management tools."
@@ -117,21 +108,17 @@ import { ProductService } from '../../services/product.service';
       </div>
     </p-card>`,
   styles: [],
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService, MessageService, DialogService],
 })
 export class ProductListComponent implements OnInit {
   readonly productService = inject(ProductService);
   readonly confirmationService = inject(ConfirmationService);
   readonly messageService = inject(MessageService);
+  readonly dialogService = inject(DialogService);
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
-
-  public modalVisible = false;
-  public updateProductData: any;
-  public modalType = 'Create';
-
-  @ViewChild('dialog') productDialog: ProductDialogComponent | undefined;
+  private ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -194,29 +181,48 @@ export class ProductListComponent implements OnInit {
   }
 
   public createProduct() {
-    this.modalVisible = true;
-    this.modalType = 'Create';
-  }
+    this.ref = this.dialogService.open(ProductDialogComponent, {
+      header: 'Create Product',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      data: {
+        type: 'Create',
+      },
+    });
 
-  public closeModal(state: boolean) {
-    if (state) {
-      this.modalVisible = false;
-      this.fetchProducts();
-    }
-  }
-
-  public onHideModal() {
-    this.productDialog?.clearForm();
-    this.updateProductData = {};
+    this.ref.onClose.subscribe((success: boolean) => {
+      if (success) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Successfully',
+          detail: 'Product have been created',
+        });
+        this.fetchProducts();
+      }
+    });
   }
 
   public updateProduct(product: Product) {
-    this.modalVisible = true;
-    this.modalType = 'Update';
-    this.updateProductData = {
-      ...product,
-      categories: product.categories.map((cate) => cate.category_name),
-    };
+    this.ref = this.dialogService.open(ProductDialogComponent, {
+      header: 'Update Product',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      data: {
+        type: 'Update',
+        data: product,
+      },
+    });
+
+    this.ref.onClose.subscribe((success: boolean) => {
+      if (success) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Successfully',
+          detail: 'Product have been updated',
+        });
+        this.fetchProducts();
+      }
+    });
   }
 
   private fetchProducts(): void {

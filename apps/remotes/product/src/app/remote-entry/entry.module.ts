@@ -5,9 +5,11 @@ import { RouterModule } from '@angular/router';
 import { RemoteEntryComponent } from './entry.component';
 import { remoteRoutes } from './entry.routes';
 
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+
 @NgModule({
   declarations: [RemoteEntryComponent],
   imports: [CommonModule, RouterModule.forChild(remoteRoutes)],
-  providers: [],
+  providers: [DynamicDialogRef],
 })
 export class RemoteEntryModule {}

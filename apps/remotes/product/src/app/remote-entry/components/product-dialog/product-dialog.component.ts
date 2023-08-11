@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -14,8 +7,9 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Category, Product } from '@ims/core';
+import { Category } from '@ims/core';
 import { ButtonModule } from 'primeng/button';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -133,25 +127,28 @@ import { ProductService } from '../../services/product.service';
 export class ProductDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly productService = inject(ProductService);
-
-  private _formData!: Product;
-  @Input() set formData(value: Product) {
-    this._formData = value;
-    if (this.validateForm && this._formData) {
-      this.validateForm.patchValue(this._formData); // Fill in form data
-    }
-  }
-  get formData(): Product {
-    return this._formData;
-  }
-
-  @Input() modalType = 'Create';
-  @Output() closeModal = new EventEmitter<boolean>();
+  readonly ref = inject(DynamicDialogRef);
 
   readonly categories$: Observable<Category[]> =
     this.productService.queryListCategory();
 
-  validateForm!: UntypedFormGroup;
+  public validateForm!: UntypedFormGroup;
+  public modalType = 'Create';
+
+  constructor(public modalConfig: DynamicDialogConfig) {
+    this.modalType = modalConfig.data.type;
+    if (modalConfig.data.data) {
+      const product = modalConfig.data.data;
+      this.validateForm.patchValue({
+        product_name: product.product_name,
+        product_description: product.product_description,
+        price: product.price,
+        discount: product.discount,
+        product_quantity: product.product_quantity,
+        categories: product.categories.map((item: any) => item.category_name),
+      });
+    }
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -162,8 +159,7 @@ export class ProductDialogComponent implements OnInit {
       if (this.modalType === 'Create') {
         this.productService.createProduct(this.validateForm.value).subscribe({
           next: () => {
-            this.validateForm.reset();
-            this.closeModal.emit(true);
+            this.ref.close(true);
           },
           error: (e) => {
             console.log(e);
@@ -173,12 +169,11 @@ export class ProductDialogComponent implements OnInit {
         this.productService
           .updateProduct({
             ...this.validateForm.value,
-            product_uid: this.formData.product_uid,
+            product_uid: this.modalConfig.data.data.product_uid,
           })
           .subscribe({
             next: () => {
-              this.validateForm.reset();
-              this.closeModal.emit(true);
+              this.ref.close(true);
             },
             error: (e) => {
               console.log(e);
