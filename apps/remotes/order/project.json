@@ -17,12 +17,7 @@
         "tsConfig": "apps/remotes/order/tsconfig.app.json",
         "assets": [
           "apps/remotes/order/src/favicon.ico",
-          "apps/remotes/order/src/assets",
-          {
-            "glob": "**/*",
-            "input": "node_modules/ngx-scanner-qrcode/wasm/",
-            "output": "apps/remotes/order/src/wasm/"
-          }
+          "apps/remotes/order/src/assets"
         ],
         "styles": ["apps/remotes/order/src/styles.scss"],
         "scripts": [],

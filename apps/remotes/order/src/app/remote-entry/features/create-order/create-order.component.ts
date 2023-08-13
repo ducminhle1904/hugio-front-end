@@ -1,10 +1,8 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
   DestroyRef,
   OnInit,
-  ViewChild,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
@@ -27,13 +25,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import {
-  NgxScannerQrcodeModule,
-  ScannerQRCodeConfig,
-  ScannerQRCodeResult,
-  NgxScannerQrcodeComponent,
-  NgxScannerQrcodeService,
-} from 'ngx-scanner-qrcode';
 import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
 
 @Component({
@@ -52,7 +43,6 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
     CheckboxModule,
     DividerModule,
     CalculateTotalPricePipe,
-    NgxScannerQrcodeModule,
   ],
   template: `<p-toast styleClass="toast"></p-toast>
     <div class="flex gap-2 h-screen w-screen p-3">
@@ -110,12 +100,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
                 </ng-template>
               </p-multiSelect>
             </div>
-            <p-button
-              icon="pi pi-qrcode"
-              styleClass="p-button-info"
-              [disabled]="action.isLoading"
-              (click)="handle(action, action.isStart ? 'stop' : 'start')"
-            ></p-button>
+            <p-button icon="pi pi-qrcode" styleClass="p-button-info"></p-button>
           </div>
 
           <p-table
@@ -208,14 +193,6 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
       </div>
       <div class="w-1/4">
         <p-card styleClass="h-full w-full">
-          <div>
-            <ngx-scanner-qrcode
-              #action="scanner"
-              [config]="config"
-              (event)="onEvent($event, action)"
-            ></ngx-scanner-qrcode>
-            <p *ngIf="action.isLoading">⌛ Loading...</p>
-          </div>
           <div *ngIf="selectedProducts.length > 0">
             <div class="flex items-center gap-2">
               <p-checkbox [binary]="true" inputId="delivery"></p-checkbox>
@@ -290,75 +267,22 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
       }
     `,
   ],
-  providers: [MessageService, NgxScannerQrcodeService],
+  providers: [MessageService],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class CreateOrderComponent implements OnInit, AfterViewInit {
+export class CreateOrderComponent implements OnInit {
   readonly productService = inject(ProductService);
   readonly destroyRef = inject(DestroyRef);
   readonly document = inject(DOCUMENT);
   readonly router = inject(Router);
-  readonly qrcodeService = inject(NgxScannerQrcodeService);
-
-  @ViewChild('action') action!: NgxScannerQrcodeComponent;
 
   public products: Product[] = [];
   public selectedProducts: Product[] = [];
-
-  public config: ScannerQRCodeConfig = {
-    constraints: {
-      video: {
-        width: window.innerWidth,
-      },
-    },
-    canvasStyles: [
-      {
-        /* layer */ lineWidth: 1,
-        fillStyle: '#00950685',
-        strokeStyle: '#00950685',
-      },
-      {
-        /* text */ font: '17px serif',
-        fillStyle: '#ff0000',
-        strokeStyle: '#ff0000',
-      },
-    ],
-  };
 
   private isFullscreen = false;
 
   ngOnInit(): void {
     this.fetchProducts();
-  }
-
-  ngAfterViewInit(): void {
-    this.action.isReady.subscribe((res: any) => {
-      // this.handle(this.action, 'start');
-    });
-  }
-
-  public onEvent(e: ScannerQRCodeResult[], action?: any): void {
-    // e && action && action.pause();
-    console.log(e);
-  }
-
-  public handle(action: any, fn: string): void {
-    const playDeviceFacingBack = (devices: any[]) => {
-      // front camera or back camera check here!
-      const device = devices.find((f) =>
-        /back|rear|environment/gi.test(f.label)
-      ); // Default Back Facing Camera
-      action.playDevice(device ? device.deviceId : devices[0].deviceId);
-    };
-
-    if (fn === 'start') {
-      action[fn](playDeviceFacingBack).subscribe(
-        (r: any) => console.log(fn, r),
-        alert
-      );
-    } else {
-      action[fn]().subscribe((r: any) => console.log(fn, r), alert);
-    }
   }
 
   public handleAction(type: string) {
