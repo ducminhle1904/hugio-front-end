@@ -23,8 +23,8 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
-import { ProductService } from '../../services/product.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProductService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-product-list',
@@ -53,6 +53,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [rowsPerPageOptions]="[10, 25, 50]"
+        [scrollable]="true"
+        scrollHeight="'100%'"
       >
         <ng-template pTemplate="caption">
           <p-button
@@ -75,7 +77,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         <ng-template pTemplate="body" let-product>
           <tr>
             <td>{{ product.product_name }}</td>
-            <td>{{ product.price | currency : 'USD' }}</td>
+            <td>{{ product.price | currency : 'USD' : 'symbol' : '1.0-0' }}</td>
             <td>
               <ng-container *ngFor="let category of product.categories">
                 <p-chip
@@ -119,7 +121,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styles: [
     `
       ::ng-deep .p-datatable-wrapper {
-        height: 60vh;
+        height: calc(100% - 120px);
+      }
+      ::ng-deep .p-card-body {
+        height: 100%;
+      }
+      ::ng-deep .p-card-content {
+        height: 95%;
+      }
+      ::ng-deep .p-datatable {
+        height: 100%;
       }
     `,
   ],

@@ -8,12 +8,12 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { UserService } from '@ims/data-access';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Observable } from 'rxjs';
-import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'ims-user-dialog',

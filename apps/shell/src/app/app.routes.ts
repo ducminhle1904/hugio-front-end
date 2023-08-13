@@ -3,7 +3,7 @@ import { AuthGuard, UserService } from '@ims/core';
 import { loadRemoteModule } from '@nx/angular/mf';
 import { inject } from '@angular/core';
 import { map } from 'rxjs';
-import { LayoutComponent } from './components/layout/layout.component';
+import { LayoutComponent } from '@ims/shared';
 
 export const appRoutes: Route[] = [
   {
@@ -20,6 +20,14 @@ export const appRoutes: Route[] = [
     canActivate: [
       () => inject(UserService).isAuthenticated.pipe(map((isAuth) => !isAuth)),
     ],
+  },
+  {
+    path: 'remotes-order',
+    loadChildren: () =>
+      loadRemoteModule('remotes-order', './Module').then(
+        (m) => m.RemoteEntryModule
+      ),
+    canActivate: [AuthGuard],
   },
   {
     path: '',

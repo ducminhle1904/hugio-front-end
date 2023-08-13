@@ -44,6 +44,22 @@ export class SidebarComponent implements OnInit {
             icon: 'pi pi-fw pi-wallet',
             routerLink: ['/remotes-cashbook'],
           },
+          {
+            label: 'Order',
+            icon: 'pi pi-fw pi-shopping-cart',
+            items: [
+              {
+                label: 'List',
+                icon: 'pi pi-fw pi-list',
+                routerLink: ['/remotes-order/list'],
+              },
+              {
+                label: 'Create',
+                icon: 'pi pi-fw pi-plus',
+                routerLink: ['/remotes-order/create'],
+              },
+            ],
+          },
         ],
       },
       {

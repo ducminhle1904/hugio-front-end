@@ -4,5 +4,6 @@
   "remotes-cashbook": "http://localhost:4203",
   "remotes-user": "http://localhost:4204",
   "remotes-product": "http://localhost:4205",
-  "remotes-auth": "http://localhost:4206"
+  "remotes-auth": "http://localhost:4206",
+  "remotes-order": "http://localhost:4207"
 }

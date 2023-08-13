@@ -16,13 +16,13 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { UserDialogComponent } from '../../components/user-dialog/user-dialog.component';
-import { UserService } from '../../services/user.service';
 import {
   DialogService,
   DynamicDialogModule,
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UserService } from '@ims/data-access';
 
 @Component({
   selector: 'ims-user-list',
@@ -49,6 +49,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [rowsPerPageOptions]="[10, 25, 50]"
+        [scrollable]="true"
+        scrollHeight="'100%'"
       >
         <ng-template pTemplate="caption">
           <p-button
@@ -70,7 +72,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         </ng-template>
         <ng-template pTemplate="body" let-user>
           <tr>
-            <td>{{ user.user_name }}</td>
+            <td>{{ user.username }}</td>
             <td>{{ user.full_name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.address }}</td>
@@ -91,14 +93,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                 <p-button
                   icon="pi pi-trash"
                   styleClass="p-button-sm p-button-danger"
-                  (click)="confirm($event, user.userUid)"
+                  (click)="confirm($event, user.user_uid)"
                 ></p-button>
               </div>
               <ng-template #reactive>
                 <p-button
                   icon="pi pi-replay"
                   styleClass="p-button-sm p-button-success"
-                  (click)="activeUser(user.userUid)"
+                  (click)="activeUser(user.user_uid)"
                 ></p-button>
               </ng-template>
             </td>
@@ -109,7 +111,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styles: [
     `
       ::ng-deep .p-datatable-wrapper {
-        height: 60vh;
+        height: calc(100% - 120px);
+      }
+      ::ng-deep .p-card-body {
+        height: 100%;
+      }
+      ::ng-deep .p-card-content {
+        height: 95%;
+      }
+      ::ng-deep .p-datatable {
+        height: 100%;
       }
     `,
   ],
@@ -180,7 +191,6 @@ export class UserListComponent implements OnInit {
   }
 
   public activeUser(user_uid: string) {
-    console.log(user_uid);
     this.userService
       .activeUser(user_uid)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -191,6 +201,7 @@ export class UserListComponent implements OnInit {
             summary: 'Successfully',
             detail: 'User have been activate',
           });
+          this.fetchUsers();
         },
         error: (e) => {
           console.log(e);

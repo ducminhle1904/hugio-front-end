@@ -14,7 +14,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
       <div class="layout-sidebar">
         <ims-sidebar></ims-sidebar>
       </div>
-      <div class="p-4 ml-[22rem]">
+      <div class="pt-4 ml-[22rem]">
         <div class="content-container mt-16">
           <router-outlet></router-outlet>
         </div>
@@ -27,7 +27,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
         position: fixed;
         overflow: auto;
         height: calc(100vh - 7rem);
-        width: calc(100vw - 25rem);
+        width: calc(100vw - 23rem);
       }
     `,
   ],

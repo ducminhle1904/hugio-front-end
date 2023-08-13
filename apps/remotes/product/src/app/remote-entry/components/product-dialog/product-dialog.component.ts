@@ -9,13 +9,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Category } from '@ims/core';
+import { ProductService } from '@ims/data-access';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Observable } from 'rxjs';
-import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'ims-product-dialog',

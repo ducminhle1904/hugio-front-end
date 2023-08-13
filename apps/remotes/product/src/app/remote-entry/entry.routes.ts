@@ -18,26 +18,6 @@ export const remoteRoutes: Route[] = [
             (c) => c.ProductListComponent
           ),
       },
-      // {
-      //   path: 'create',
-      //   loadComponent: () =>
-      //     import('./features/product-detail/product-detail.component').then(
-      //       (c) => c.ProductDetailComponent
-      //     ),
-      //     data: {
-      //       breadcrumb: "Product Create",
-      //     },
-      // },
-      // {
-      //   path: 'detail/:id',
-      //   loadComponent: () =>
-      //     import('./features/product-detail/product-detail.component').then(
-      //       (c) => c.ProductDetailComponent
-      //     ),
-      //     data: {
-      //       breadcrumb: "Product Detail",
-      //     },
-      // },
     ],
   },
 ];
