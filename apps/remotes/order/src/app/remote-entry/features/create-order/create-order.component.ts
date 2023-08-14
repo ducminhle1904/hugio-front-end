@@ -16,7 +16,6 @@ import {
   closeFullscreen,
   openFullscreen,
 } from '@ims/shared';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -27,7 +26,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
-import { BarcodeFormat } from '@zxing/library';
+import { NgxScannerQrcodeModule, LOAD_WASM } from 'ngx-scanner-qrcode';
+
+LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
 
 @Component({
   selector: 'ims-create-order',
@@ -45,7 +46,7 @@ import { BarcodeFormat } from '@zxing/library';
     CheckboxModule,
     DividerModule,
     CalculateTotalPricePipe,
-    ZXingScannerModule,
+    NgxScannerQrcodeModule,
   ],
   template: `<p-toast styleClass="toast"></p-toast>
     <div class="flex gap-2 h-screen w-screen p-3">
@@ -103,7 +104,11 @@ import { BarcodeFormat } from '@zxing/library';
                 </ng-template>
               </p-multiSelect>
             </div>
-            <p-button icon="pi pi-qrcode" styleClass="p-button-info"></p-button>
+            <p-button
+              icon="pi pi-qrcode"
+              styleClass="p-button-info"
+              (click)="action.isStart ? action.stop() : action.start()"
+            ></p-button>
           </div>
 
           <p-table
@@ -196,12 +201,7 @@ import { BarcodeFormat } from '@zxing/library';
       </div>
       <div class="w-1/4">
         <p-card styleClass="h-full w-full">
-          <div>
-            <zxing-scanner
-              [formats]="allowedFormats"
-              (scanSuccess)="onCodeResult($event)"
-            ></zxing-scanner>
-          </div>
+          <ngx-scanner-qrcode #action="scanner"></ngx-scanner-qrcode>
           <div *ngIf="selectedProducts.length > 0">
             <div class="flex items-center gap-2">
               <p-checkbox [binary]="true" inputId="delivery"></p-checkbox>
@@ -287,14 +287,9 @@ export class CreateOrderComponent implements OnInit {
 
   public products: Product[] = [];
   public selectedProducts: Product[] = [];
+  public scanQr = false;
 
   private isFullscreen = false;
-  public allowedFormats = [
-    BarcodeFormat.QR_CODE,
-    BarcodeFormat.EAN_13,
-    BarcodeFormat.CODE_128,
-    BarcodeFormat.DATA_MATRIX,
-  ];
 
   ngOnInit(): void {
     this.fetchProducts();
