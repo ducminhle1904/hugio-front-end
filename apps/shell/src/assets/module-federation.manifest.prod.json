@@ -1,9 +1,9 @@
 {
-  "remotes-summary": "https://af87f6df4e2c.ngrok.app",
-  "remotes-analysis": "https://c7415308c4a3.ngrok.app",
-  "remotes-cashbook": "https://3032618eb319.ngrok.app",
-  "remotes-user": "https://5ce5547dd9b5.ngrok.app",
-  "remotes-product": "https://dd9c4e9d6802.ngrok.app",
-  "remotes-auth": "https://ae03ad2ab75b.ngrok.app",
-  "remotes-order": "http://localhost:4207"
+  "remotes-summary": "https://a7af46c64d3a.ngrok.app",
+  "remotes-analysis": "https://b30872be34a5.ngrok.app",
+  "remotes-cashbook": "https://f0b8ed3ac307.ngrok.app",
+  "remotes-user": "https://2c0eff16b84f.ngrok.app",
+  "remotes-product": "https://0e68bb75a9e4.ngrok.app",
+  "remotes-auth": "https://234a02ba8c23.ngrok.app",
+  "remotes-order": "https://dd9461d4127d.ngrok.app"
 }
