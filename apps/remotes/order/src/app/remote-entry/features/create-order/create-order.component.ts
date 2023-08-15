@@ -10,9 +10,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Product } from '@ims/core';
-import { ProductService } from '@ims/data-access';
+import { OrderService, ProductService } from '@ims/data-access';
 import {
   CalculateTotalPricePipe,
+  LoadingOverlayService,
   closeFullscreen,
   openFullscreen,
 } from '@ims/shared';
@@ -57,7 +58,7 @@ LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
       <div class="w-3/4">
         <p-card styleClass="h-full w-full">
           <div class="flex items-center justify-between">
-            <div class="w-1/4">
+            <div class="w-1/2">
               <p-multiSelect
                 [options]="products"
                 [(ngModel)]="selectedProducts"
@@ -266,6 +267,7 @@ LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
               <p-button
                 label="Create order"
                 styleClass="p-button-info w-full"
+                (click)="createOrder()"
               ></p-button>
             </div>
           </ng-template>
@@ -291,13 +293,15 @@ LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
 })
 export class CreateOrderComponent implements OnInit {
   readonly productService = inject(ProductService);
+  readonly orderService = inject(OrderService);
   readonly destroyRef = inject(DestroyRef);
   readonly document = inject(DOCUMENT);
   readonly router = inject(Router);
+  readonly messageService = inject(MessageService);
+  readonly loadingOverlayService = inject(LoadingOverlayService);
 
   public products: Product[] = [];
   public selectedProducts: Product[] = [];
-  public scanQr = false;
 
   private isFullscreen = false;
 
@@ -331,12 +335,38 @@ export class CreateOrderComponent implements OnInit {
   }
 
   public removeProduct(product_uid: string) {
-    const productIndex = this.selectedProducts.findIndex(
-      (product) => product.product_uid === product_uid
+    this.selectedProducts = this.selectedProducts.filter(
+      (product) => product.product_uid !== product_uid
     );
-    if (productIndex !== -1) {
-      this.selectedProducts.splice(productIndex, 1);
-    }
+  }
+
+  public createOrder() {
+    this.loadingOverlayService.show();
+    const order_information = this.selectedProducts.map((product) => ({
+      product_uid: product.product_uid,
+      quantity: product.product_quantity,
+    }));
+    this.orderService
+      .placeAnOrder(order_information)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.loadingOverlayService.hide();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Order successfully',
+          });
+        },
+        error: () => {
+          this.loadingOverlayService.hide();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Failed',
+            detail: 'Fail to place an order, please try again!',
+          });
+        },
+      });
   }
 
   private backToDashboard() {

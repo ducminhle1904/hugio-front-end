@@ -11,7 +11,9 @@ export class OrderService {
 
   constructor() {}
 
-  public placeAnOrder(order_information: any[]): Observable<ResponseModel> {
+  public placeAnOrder(
+    order_information: { product_uid: string; quantity: number }[]
+  ): Observable<ResponseModel> {
     return this.http.post<ResponseModel>('/order_service/order/place', {
       request: {
         order_information,

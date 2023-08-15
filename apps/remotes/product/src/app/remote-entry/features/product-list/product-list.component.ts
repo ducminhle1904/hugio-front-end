@@ -18,6 +18,7 @@ import {
   DynamicDialogModule,
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
+import { DialogModule } from 'primeng/dialog';
 import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -42,8 +43,10 @@ import { ProductService } from '@ims/data-access';
     ToastModule,
     ProductDialogComponent,
     DynamicDialogModule,
+    DialogModule,
   ],
   template: ` <p-toast styleClass="toast"></p-toast>
+    <p-dialog header="QR code" [(visible)]="qrCodeModal"> </p-dialog>
     <p-card header="Product List" styleClass="h-full">
       <p-table
         [value]="products"
@@ -112,6 +115,11 @@ import { ProductService } from '@ims/data-access';
                   styleClass="p-button-sm p-button-danger"
                   (click)="confirm($event, product.product_uid)"
                 ></p-button>
+                <p-button
+                  icon="pi pi-qrcode"
+                  styleClass="p-button-sm p-button-danger"
+                  (click)="viewQrCode(product.product_uid)"
+                ></p-button>
               </div>
             </td>
           </tr>
@@ -146,6 +154,8 @@ export class ProductListComponent implements OnInit {
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
+  public qrCodeModal = false;
+
   private ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
@@ -258,6 +268,14 @@ export class ProductListComponent implements OnInit {
           this.fetchProducts();
         }
       });
+  }
+
+  public viewQrCode(product_uid: string) {
+    this.qrCodeModal = true;
+    this.productService
+      .getProductQr(product_uid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => console.log(res));
   }
 
   private fetchProducts(): void {
