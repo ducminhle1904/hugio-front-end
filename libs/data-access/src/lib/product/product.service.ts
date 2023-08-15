@@ -21,7 +21,6 @@ export class ProductService {
       request: {
         page_number: 1,
         page_size: 100,
-        property: 'string',
         sort: 'ASC',
       },
     });
