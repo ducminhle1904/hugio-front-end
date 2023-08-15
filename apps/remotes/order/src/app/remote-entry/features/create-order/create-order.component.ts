@@ -26,7 +26,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
-import { NgxScannerQrcodeModule, LOAD_WASM } from 'ngx-scanner-qrcode';
+import {
+  NgxScannerQrcodeModule,
+  LOAD_WASM,
+  ScannerQRCodeResult,
+} from 'ngx-scanner-qrcode';
 
 LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
 
@@ -201,7 +205,13 @@ LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
       </div>
       <div class="w-1/4">
         <p-card styleClass="h-full w-full">
-          <ngx-scanner-qrcode #action="scanner"></ngx-scanner-qrcode>
+          <ngx-scanner-qrcode
+            #action="scanner"
+            (event)="handleScanQr($event)"
+          ></ngx-scanner-qrcode>
+
+          <p-divider></p-divider>
+
           <div *ngIf="selectedProducts.length > 0">
             <div class="flex items-center gap-2">
               <p-checkbox [binary]="true" inputId="delivery"></p-checkbox>
@@ -295,8 +305,8 @@ export class CreateOrderComponent implements OnInit {
     this.fetchProducts();
   }
 
-  public onCodeResult(resultString: string) {
-    console.log(resultString);
+  public handleScanQr(result: ScannerQRCodeResult[]) {
+    console.log(result);
   }
 
   public handleAction(type: string) {
