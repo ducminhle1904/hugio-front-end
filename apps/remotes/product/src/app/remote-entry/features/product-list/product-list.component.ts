@@ -26,6 +26,7 @@ import { ToastModule } from 'primeng/toast';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductService } from '@ims/data-access';
+import { LoadingOverlayService } from '@ims/shared';
 
 @Component({
   selector: 'ims-product-list',
@@ -46,7 +47,15 @@ import { ProductService } from '@ims/data-access';
     DialogModule,
   ],
   template: ` <p-toast styleClass="toast"></p-toast>
-    <p-dialog header="QR code" [(visible)]="qrCodeModal"> </p-dialog>
+    <p-dialog
+      header="QR code"
+      [(visible)]="qrCodeModal"
+      [style]="{ width: '250px' }"
+      ><img
+        [src]="qrImage"
+        alt="Base64 Image"
+        class="w-full h-full object-contain"
+    /></p-dialog>
     <p-card header="Product List" styleClass="h-full">
       <p-table
         [value]="products"
@@ -151,10 +160,12 @@ export class ProductListComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly dialogService = inject(DialogService);
   readonly destroyRef = inject(DestroyRef);
+  readonly loadingOverlayService = inject(LoadingOverlayService);
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
   public qrCodeModal = false;
+  public qrImage = '';
 
   private ref: DynamicDialogRef | undefined;
 
@@ -271,18 +282,34 @@ export class ProductListComponent implements OnInit {
   }
 
   public viewQrCode(product_uid: string) {
-    this.qrCodeModal = true;
+    this.loadingOverlayService.show();
     this.productService
       .getProductQr(product_uid)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => console.log(res));
+      .subscribe({
+        next: (res) => {
+          this.qrImage = 'data:image/png;base64,' + res.response;
+          this.qrCodeModal = true;
+          this.loadingOverlayService.hide();
+        },
+        error: () => {
+          this.loadingOverlayService.hide();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Failed',
+            detail: 'Fail to fetch QR code',
+          });
+        },
+      });
   }
 
   private fetchProducts(): void {
+    this.loadingOverlayService.show();
     this.productService
       .queryListProduct()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) => {
+        this.loadingOverlayService.hide();
         this.products = data.response.content;
       });
   }
