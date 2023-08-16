@@ -23,6 +23,7 @@ import {
 } from 'primeng/dynamicdialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '@ims/data-access';
+import { LoadingOverlayService } from '@ims/shared';
 
 @Component({
   selector: 'ims-user-list',
@@ -133,6 +134,7 @@ export class UserListComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly dialogService = inject(DialogService);
   readonly destroyRef = inject(DestroyRef);
+  readonly loadingOverlayService = inject(LoadingOverlayService);
 
   public users: User[] = [];
   private ref: DynamicDialogRef | undefined;
@@ -249,9 +251,13 @@ export class UserListComponent implements OnInit {
   }
 
   private fetchUsers() {
+    this.loadingOverlayService.show();
     this.userService
       .queryListUser()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => (this.users = data.response.content));
+      .subscribe((data) => {
+        this.users = data.response.content;
+        this.loadingOverlayService.hide();
+      });
   }
 }

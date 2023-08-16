@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  ViewChild,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
@@ -17,6 +18,12 @@ import {
   closeFullscreen,
   openFullscreen,
 } from '@ims/shared';
+import {
+  LOAD_WASM,
+  NgxScannerQrcodeComponent,
+  NgxScannerQrcodeModule,
+  ScannerQRCodeResult,
+} from 'ngx-scanner-qrcode';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -27,13 +34,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
-import {
-  NgxScannerQrcodeModule,
-  LOAD_WASM,
-  ScannerQRCodeResult,
-} from 'ngx-scanner-qrcode';
 
-LOAD_WASM().subscribe((res: any) => console.log('LOAD_WASM', res));
+LOAD_WASM().subscribe((res: unknown) => console.log('LOAD_WASM', res));
 
 @Component({
   selector: 'ims-create-order',
@@ -300,6 +302,8 @@ export class CreateOrderComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly loadingOverlayService = inject(LoadingOverlayService);
 
+  @ViewChild('action') action!: NgxScannerQrcodeComponent;
+
   public products: Product[] = [];
   public selectedProducts: Product[] = [];
 
@@ -310,7 +314,25 @@ export class CreateOrderComponent implements OnInit {
   }
 
   public handleScanQr(result: ScannerQRCodeResult[]) {
-    console.log(result);
+    if (result[0].value) {
+      this.action.pause();
+      const scannedProduct = this.products.find(
+        (product) => product.product_uid === result[0].value
+      );
+      if (scannedProduct) {
+        const selectedProductIndex = this.selectedProducts.findIndex(
+          (product) => product.product_uid === scannedProduct.product_uid
+        );
+        if (selectedProductIndex !== -1) {
+          this.selectedProducts[selectedProductIndex].product_quantity += 1;
+        } else {
+          this.selectedProducts.push(scannedProduct);
+        }
+      }
+      setTimeout(() => {
+        this.action.play();
+      }, 2000);
+    }
   }
 
   public handleAction(type: string) {
@@ -357,6 +379,7 @@ export class CreateOrderComponent implements OnInit {
             summary: 'Success',
             detail: 'Order successfully',
           });
+          this.router.navigate(['/remotes-order/list']);
         },
         error: () => {
           this.loadingOverlayService.hide();

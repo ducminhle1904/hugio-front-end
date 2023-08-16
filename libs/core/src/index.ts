@@ -18,6 +18,7 @@ export * from './lib/guards/authentication.guard';
 export * from './lib/models/product.model';
 export * from './lib/models/response.model';
 export * from './lib/models/user.model';
+export * from './lib/models/order.model';
 
 /* Utils */
 export * from './lib/utils/utils';

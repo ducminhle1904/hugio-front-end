@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { ResponseModel } from '@ims/core';
+import { OrderResponseDTO, ResponseModel } from '@ims/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -21,8 +21,8 @@ export class OrderService {
     });
   }
 
-  public queryListOrder(): Observable<any> {
-    return this.http.post('/order_service/order/all', {
+  public queryListOrder(): Observable<OrderResponseDTO> {
+    return this.http.post<OrderResponseDTO>('/order_service/order/all', {
       request: {
         page_number: 1,
         page_size: 100,

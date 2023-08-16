@@ -1,14 +1,18 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'ims-loading-overlay',
   standalone: true,
   imports: [CommonModule, OverlayModule, PortalModule, ProgressSpinnerModule],
-  template: `<div class="loading-overlay">
+  template: `<div
+    class="loading-overlay"
+    [ngClass]="{ 'create-order-route': isCreateOrderRoute }"
+  >
     <div class="backdrop"></div>
     <div class="spinner">
       <p-progressSpinner
@@ -23,14 +27,21 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     `
       .loading-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 5rem;
+        left: 22rem;
+        width: calc(100vw - 23rem);
+        height: calc(100vh - 7rem);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 1000; /* Adjust as needed */
+      }
+
+      .create-order-route {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
       }
 
       .backdrop {
@@ -39,7 +50,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 7px;
       }
 
       .spinner {
@@ -48,4 +60,14 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     `,
   ],
 })
-export class LoadingOverlayComponent {}
+export class LoadingOverlayComponent implements OnInit {
+  isCreateOrderRoute = false;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    const currentRoute = this.router.url;
+    if (currentRoute === '/remotes-order/create')
+      this.isCreateOrderRoute = true;
+  }
+}
