@@ -105,16 +105,16 @@ import { TableModule } from 'primeng/table';
   </p-card>`,
   styles: [
     `
-      ::ng-deep .p-datatable-wrapper {
+      :host ::ng-deep .p-datatable-wrapper {
         height: calc(100% - 60px);
       }
-      ::ng-deep .p-card-body {
+      :host ::ng-deep .p-card-body {
         height: 100%;
       }
-      ::ng-deep .p-card-content {
+      :host ::ng-deep .p-card-content {
         height: 95%;
       }
-      ::ng-deep .p-datatable {
+      :host ::ng-deep .p-datatable {
         height: 100%;
       }
     `,

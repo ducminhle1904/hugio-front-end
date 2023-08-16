@@ -278,14 +278,14 @@ LOAD_WASM().subscribe((res: unknown) => console.log('LOAD_WASM', res));
     </div> `,
   styles: [
     `
-      ::ng-deep .p-card .p-card-body {
+      :host ::ng-deep .p-card .p-card-body {
         height: 100%;
       }
-      ::ng-deep .p-card .p-card-content {
+      :host ::ng-deep .p-card .p-card-content {
         height: 90%;
         padding: unset;
       }
-      ::ng-deep .p-datatable {
+      :host ::ng-deep .p-datatable {
         height: 90%;
       }
     `,
