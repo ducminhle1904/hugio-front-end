@@ -35,8 +35,6 @@ import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
 
-LOAD_WASM().subscribe((res: unknown) => console.log('LOAD_WASM', res));
-
 @Component({
   selector: 'ims-create-order',
   standalone: true,
@@ -270,6 +268,7 @@ LOAD_WASM().subscribe((res: unknown) => console.log('LOAD_WASM', res));
                 label="Create order"
                 styleClass="p-button-info w-full"
                 (click)="createOrder()"
+                [disabled]="selectedProducts.length === 0"
               ></p-button>
             </div>
           </ng-template>
@@ -310,6 +309,7 @@ export class CreateOrderComponent implements OnInit {
   private isFullscreen = false;
 
   ngOnInit(): void {
+    LOAD_WASM().subscribe((res: unknown) => console.log('LOAD_WASM', res));
     this.fetchProducts();
   }
 

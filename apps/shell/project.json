@@ -15,7 +15,15 @@
         "main": "apps/shell/src/main.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/shell/tsconfig.app.json",
-        "assets": ["apps/shell/src/favicon.ico", "apps/shell/src/assets"],
+        "assets": [
+          "apps/shell/src/favicon.ico",
+          "apps/shell/src/assets",
+          {
+            "glob": "**/*",
+            "input": "node_modules/ngx-scanner-qrcode/wasm/",
+            "output": "./assets/wasm/"
+          }
+        ],
         "styles": ["apps/shell/src/styles.scss"],
         "scripts": [],
         "customWebpackConfig": {

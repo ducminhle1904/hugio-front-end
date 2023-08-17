@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
+  OnDestroy,
   OnInit,
   ViewEncapsulation,
   inject,
@@ -154,7 +155,7 @@ import { LoadingOverlayService } from '@ims/shared';
   encapsulation: ViewEncapsulation.Emulated,
   providers: [ConfirmationService, MessageService, DialogService],
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   readonly productService = inject(ProductService);
   readonly confirmationService = inject(ConfirmationService);
   readonly messageService = inject(MessageService);
@@ -308,9 +309,18 @@ export class ProductListComponent implements OnInit {
     this.productService
       .queryListProduct()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.loadingOverlayService.hide();
-        this.products = data.response.content;
+      .subscribe({
+        next: (data) => {
+          this.loadingOverlayService.hide();
+          this.products = data.response.content;
+        },
+        error: () => {
+          this.loadingOverlayService.hide();
+        },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.loadingOverlayService.hide();
   }
 }
