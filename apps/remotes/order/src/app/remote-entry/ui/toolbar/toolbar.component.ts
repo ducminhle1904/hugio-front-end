@@ -32,7 +32,7 @@ import { ButtonModule } from 'primeng/button';
       <p-button
         icon="pi pi-user"
         styleClass="p-button-success mr-2"
-        pTooltip="Client profile"
+        pTooltip="Client list"
         tooltipPosition="top"
       ></p-button>
       <p-button

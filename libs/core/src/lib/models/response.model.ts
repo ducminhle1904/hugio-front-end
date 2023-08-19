@@ -6,6 +6,7 @@ export interface ResponseModel {
   };
   code: string;
   message: string;
+  response: any;
 }
 
 export interface PaginationModel {

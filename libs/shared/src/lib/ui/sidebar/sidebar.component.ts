@@ -66,7 +66,7 @@ export class SidebarComponent implements OnInit {
         label: 'MANAGEMENT',
         items: [
           {
-            label: 'User',
+            label: 'Client',
             icon: 'pi pi-fw pi-user',
             items: [
               {

@@ -10,8 +10,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Product } from '@ims/core';
-import { OrderService, ProductService } from '@ims/data-access';
+import { OrderCreateRequest, Product, User } from '@ims/core';
+import { OrderService, ProductService, UserService } from '@ims/data-access';
 import {
   CalculateTotalPricePipe,
   LoadingOverlayService,
@@ -29,6 +29,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DividerModule } from 'primeng/divider';
+import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
@@ -52,8 +53,9 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
     DividerModule,
     CalculateTotalPricePipe,
     NgxScannerQrcodeModule,
+    DropdownModule,
   ],
-  template: `<p-toast styleClass="toast"></p-toast>
+  template: `<p-toast></p-toast>
     <div class="flex gap-2 h-screen w-screen p-3">
       <div class="w-3/4">
         <p-card styleClass="h-full w-full">
@@ -214,10 +216,32 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
           <p-divider></p-divider>
 
           <div *ngIf="selectedProducts.length > 0">
-            <div class="flex items-center gap-2">
-              <p-checkbox [binary]="true" inputId="delivery"></p-checkbox>
-              <label for="delivery">Delivery</label>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2">
+                <p-checkbox [binary]="true" inputId="delivery"></p-checkbox>
+                <label for="delivery">Delivery</label>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <p-checkbox
+                  [binary]="true"
+                  inputId="guest"
+                  [(ngModel)]="isGuest"
+                ></p-checkbox>
+                <label for="guest">Walkin Guest</label>
+              </div>
             </div>
+
+            <p-divider></p-divider>
+
+            <p-dropdown
+              [options]="clients"
+              [(ngModel)]="selectedClient"
+              optionLabel="username"
+              styleClass="w-full"
+              placeholder="Select a Client"
+              *ngIf="!isGuest"
+            ></p-dropdown>
 
             <p-divider></p-divider>
 
@@ -294,6 +318,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
 })
 export class CreateOrderComponent implements OnInit {
   readonly productService = inject(ProductService);
+  readonly userService = inject(UserService);
   readonly orderService = inject(OrderService);
   readonly destroyRef = inject(DestroyRef);
   readonly document = inject(DOCUMENT);
@@ -306,32 +331,43 @@ export class CreateOrderComponent implements OnInit {
   public products: Product[] = [];
   public selectedProducts: Product[] = [];
 
+  public clients: User[] = [];
+  public selectedClient: User | undefined = undefined;
+
+  public isGuest = false;
+
   private isFullscreen = false;
 
   ngOnInit(): void {
     LOAD_WASM().subscribe((res: unknown) => console.log('LOAD_WASM', res));
     this.fetchProducts();
+    this.fetchClients();
   }
 
-  public handleScanQr(result: ScannerQRCodeResult[]) {
-    if (result[0].value) {
+  public async handleScanQr(result: ScannerQRCodeResult[]) {
+    const [firstResult] = result;
+    if (firstResult.value) {
       this.action.pause();
-      const scannedProduct = this.products.find(
-        (product) => product.product_uid === result[0].value
+      const productMap = new Map(
+        this.products.map((product) => [product.product_uid, product])
       );
+      const scannedProduct = productMap.get(firstResult.value);
       if (scannedProduct) {
-        const selectedProductIndex = this.selectedProducts.findIndex(
-          (product) => product.product_uid === scannedProduct.product_uid
+        const selectedProductMap = new Map(
+          this.selectedProducts.map((product) => [product.product_uid, product])
         );
-        if (selectedProductIndex !== -1) {
-          this.selectedProducts[selectedProductIndex].product_quantity += 1;
+        const selectedProduct = selectedProductMap.get(
+          scannedProduct.product_uid
+        );
+        if (selectedProduct) {
+          selectedProduct.product_quantity =
+            (selectedProduct.product_quantity || 0) + 1;
         } else {
           this.selectedProducts.push(scannedProduct);
         }
       }
-      setTimeout(() => {
-        this.action.play();
-      }, 2000);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      this.action.play();
     }
   }
 
@@ -364,32 +400,53 @@ export class CreateOrderComponent implements OnInit {
 
   public createOrder() {
     this.loadingOverlayService.show();
+    const request = this.buildOrderRequest();
+    this.placeOrder(request);
+  }
+
+  private buildOrderRequest(): OrderCreateRequest {
     const order_information = this.selectedProducts.map((product) => ({
       product_uid: product.product_uid,
       quantity: product.product_quantity,
     }));
+
+    return {
+      request: {
+        customer_name: this.selectedClient?.username ?? null,
+        customer_phone_number: this.selectedClient?.phone_number ?? null,
+        order_information,
+      },
+    };
+  }
+
+  private placeOrder(request: OrderCreateRequest): void {
     this.orderService
-      .placeAnOrder(order_information)
+      .placeAnOrder(request)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.loadingOverlayService.hide();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Order successfully',
-          });
-          this.router.navigate(['/remotes-order/list']);
-        },
-        error: () => {
-          this.loadingOverlayService.hide();
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Failed',
-            detail: 'Fail to place an order, please try again!',
-          });
-        },
+        next: () => this.handleOrderSuccess(),
+        error: () => this.handleOrderError(),
       });
+  }
+
+  private handleOrderSuccess(): void {
+    this.loadingOverlayService.hide();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Order successfully',
+    });
+    this.action.stop();
+    this.router.navigate(['/remotes-order/list']);
+  }
+
+  private handleOrderError(): void {
+    this.loadingOverlayService.hide();
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Failed',
+      detail: 'Fail to place an order, please try again!',
+    });
   }
 
   private backToDashboard() {
@@ -405,18 +462,45 @@ export class CreateOrderComponent implements OnInit {
     }
   }
 
+  private fetchClients(): void {
+    this.userService
+      .queryListUser()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.clients = data.response.content;
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'There is an error when getting clients',
+          });
+        },
+      });
+  }
+
   private fetchProducts(): void {
     this.productService
       .queryListProduct()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.products = data.response.content.map((product) => {
-          return {
-            ...product,
-            product_quantity: 1,
-            stock: product.product_quantity,
-          };
-        });
+      .subscribe({
+        next: (data) => {
+          this.products = data.response.content.map((product) => {
+            return {
+              ...product,
+              product_quantity: 1,
+              stock: product.product_quantity,
+            };
+          });
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'There is an error when getting products',
+          });
+        },
       });
   }
 }

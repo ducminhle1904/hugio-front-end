@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { OrderResponseDTO, ResponseModel } from '@ims/core';
+import { OrderCreateRequest, OrderResponseDTO, ResponseModel } from '@ims/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,14 +11,8 @@ export class OrderService {
 
   constructor() {}
 
-  public placeAnOrder(
-    order_information: { product_uid: string; quantity: number }[]
-  ): Observable<ResponseModel> {
-    return this.http.post<ResponseModel>('/order_service/order/place', {
-      request: {
-        order_information,
-      },
-    });
+  public placeAnOrder(request: OrderCreateRequest): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/order_service/order/place', request);
   }
 
   public queryListOrder(): Observable<OrderResponseDTO> {

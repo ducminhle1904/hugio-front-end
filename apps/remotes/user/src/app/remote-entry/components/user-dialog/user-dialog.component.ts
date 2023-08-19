@@ -31,15 +31,15 @@ import { Observable } from 'rxjs';
       <div class="flex gap-3">
         <div class="flex flex-col gap-1 w-1/2">
           <label
-            htmlFor="user_name"
+            htmlFor="username"
             class="block text-gray-300 text-sm font-bold"
             >User Name</label
           >
           <input
             pInputText
-            id="user_name"
-            aria-describedby="user_name-help"
-            formControlName="user_name"
+            id="username"
+            aria-describedby="username-help"
+            formControlName="username"
           />
         </div>
         <div class="flex flex-col gap-1 w-1/2">
@@ -82,7 +82,20 @@ import { Observable } from 'rxjs';
       </div>
 
       <div class="flex gap-3">
-        <div class="flex flex-col gap-1 w-full" *ngIf="roles$ | async as roles">
+        <div class="flex flex-col gap-1 w-1/2">
+          <label
+            htmlFor="phone_number"
+            class="block text-gray-300 text-sm font-bold"
+            >Phone number</label
+          >
+          <input
+            pInputText
+            id="phone_number"
+            aria-describedby="phone_number-help"
+            formControlName="phone_number"
+          />
+        </div>
+        <div class="flex flex-col gap-1 w-1/2" *ngIf="roles$ | async as roles">
           <label htmlFor="roles" class="block text-gray-300 text-sm font-bold"
             >Roles</label
           >
@@ -100,6 +113,7 @@ import { Observable } from 'rxjs';
         [label]="modalType"
         type="submit"
         styleClass="p-button-success"
+        [loading]="isLoading"
       ></p-button>
     </div>
   </form>`,
@@ -112,6 +126,7 @@ export class UserDialogComponent implements OnInit {
   readonly destroyRef = inject(DestroyRef);
 
   public modalType = 'Create';
+  public isLoading = false;
 
   readonly roles$: Observable<string[]> = this.userService.queryListRole();
 
@@ -129,39 +144,58 @@ export class UserDialogComponent implements OnInit {
   }
 
   public submitForm(): void {
-    if (this.validateForm.valid) {
-      if (this.modalType === 'Create') {
-        this.userService
-          .createUser(this.validateForm.value)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: () => {
-              this.validateForm.reset();
-            },
-            error: (e) => {
-              console.log(e);
-            },
-          });
-      }
-    } else {
-      Object.values(this.validateForm.controls).forEach((control) => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
-        }
-      });
+    if (!this.validateForm.valid) {
+      this.markFormControlsAsDirty();
+      return;
     }
+
+    this.isLoading = true;
+    this.validateForm.disable();
+
+    const formValue = this.validateForm.value;
+    const userServiceMethod =
+      this.modalType === 'Create' ? 'createUser' : 'editUser';
+    const userServiceCall =
+      userServiceMethod === 'createUser'
+        ? this.userService.createUser(formValue)
+        : this.userService.editUser({
+            ...formValue,
+            user_uid: this.modalConfig.data.data.user_uid,
+          });
+
+    userServiceCall.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.handleSuccess(),
+      error: (e) => this.handleError(e),
+    });
   }
 
-  public clearForm() {
+  private markFormControlsAsDirty(): void {
+    Object.values(this.validateForm.controls).forEach((control) => {
+      if (control.invalid) {
+        control.markAsDirty();
+        control.updateValueAndValidity({ onlySelf: true });
+      }
+    });
+  }
+
+  private handleSuccess(): void {
     this.validateForm.reset();
+    this.isLoading = false;
+    this.ref.close(true);
+  }
+
+  private handleError(error: any): void {
+    console.log(error);
+    this.validateForm.enable();
+    this.isLoading = false;
   }
 
   private initForm() {
     this.validateForm = this.fb.group({
-      user_name: [null, [Validators.required]],
+      username: [null, [Validators.required]],
       full_name: [null, [Validators.required]],
       email: [null, [Validators.required]],
+      phone_number: [null, [Validators.required]],
       address: [null, [Validators.required]],
       roles: [null, [Validators.required]],
     });

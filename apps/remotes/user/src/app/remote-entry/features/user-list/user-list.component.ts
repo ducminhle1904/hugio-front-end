@@ -42,7 +42,7 @@ import { LoadingOverlayService } from '@ims/shared';
     DynamicDialogModule,
   ],
   template: `<p-toast styleClass="toast"></p-toast>
-    <p-card header="User List" styleClass="h-full">
+    <p-card header="Client List" styleClass="h-full">
       <p-table
         [value]="users"
         styleClass="p-datatable-sm"
@@ -64,9 +64,9 @@ import { LoadingOverlayService } from '@ims/shared';
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th>Username</th>
             <th>Full Name</th>
             <th>Email</th>
+            <th>Phone</th>
             <th>Address</th>
             <th>Status</th>
             <th>Action</th>
@@ -74,9 +74,9 @@ import { LoadingOverlayService } from '@ims/shared';
         </ng-template>
         <ng-template pTemplate="body" let-user>
           <tr>
-            <td>{{ user.username }}</td>
             <td>{{ user.full_name }}</td>
             <td>{{ user.email }}</td>
+            <td>{{ user.phone_number }}</td>
             <td>{{ user.address }}</td>
             <td>
               <p-tag

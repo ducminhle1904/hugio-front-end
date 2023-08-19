@@ -25,7 +25,7 @@
           }
         ],
         "styles": ["apps/shell/src/styles.scss"],
-        "scripts": [],
+        "scripts": ["node_modules/chart.js/dist/chart.js"],
         "customWebpackConfig": {
           "path": "apps/shell/webpack.config.js"
         }

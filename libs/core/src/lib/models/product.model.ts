@@ -7,6 +7,7 @@ export interface Product {
   createdBy: string;
   id: number;
   price: number;
+  fee: number;
   product_description: string;
   product_details: ProductDetail[];
   product_quantity: number;
@@ -42,6 +43,7 @@ export interface ProductDetail {
 export interface ProductCreateRequest {
   name: string;
   price: number;
+  fee: number;
   discount: number;
   product_description: string;
   product_quantity: number;

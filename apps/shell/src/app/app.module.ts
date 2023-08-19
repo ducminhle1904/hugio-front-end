@@ -14,6 +14,7 @@ import {
   ErrorInterceptor,
   JwtService,
   UserService,
+  TimeoutInterceptor,
 } from '@ims/core';
 import { EMPTY } from 'rxjs';
 
@@ -43,6 +44,7 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
     },
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TimeoutInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],

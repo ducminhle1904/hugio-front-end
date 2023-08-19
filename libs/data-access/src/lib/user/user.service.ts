@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   ResponseModel,
   RoleResponse,
-  UserCreateRequest,
+  UserCreateEditRequest,
   UserDetailResponse,
   UserListResponse,
 } from '@ims/core';
@@ -41,8 +41,14 @@ export class UserService {
       );
   }
 
-  public createUser(request: UserCreateRequest): Observable<ResponseModel> {
+  public createUser(request: UserCreateEditRequest): Observable<ResponseModel> {
     return this.http.post<ResponseModel>('/user_service/user/create', {
+      request,
+    });
+  }
+
+  public editUser(request: UserCreateEditRequest): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/user_service/user/edit', {
       request,
     });
   }

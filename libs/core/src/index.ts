@@ -4,6 +4,7 @@ export * from './lib/core.module';
 export * from './lib/interceptor/api.interceptor';
 export * from './lib/interceptor/error.interceptor';
 export * from './lib/interceptor/token.interceptor';
+export * from './lib/interceptor/timeout.interceptor';
 
 /* Services */
 export * from './lib/services/jwt.service';

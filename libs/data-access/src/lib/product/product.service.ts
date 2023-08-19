@@ -42,8 +42,8 @@ export class ProductService {
       );
   }
 
-  public getProductQr(product_uid: string): Observable<any> {
-    return this.http.post<any>('/product_service/product/qr', {
+  public getProductQr(product_uid: string): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/product_service/product/qr', {
       request: product_uid,
     });
   }

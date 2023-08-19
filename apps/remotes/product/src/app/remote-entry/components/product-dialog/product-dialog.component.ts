@@ -70,14 +70,12 @@ import { Observable } from 'rxjs';
           ></p-inputNumber>
         </div>
         <div class="flex flex-col gap-1 w-1/2">
-          <label
-            htmlFor="discount"
-            class="block text-gray-300 text-sm font-bold"
-            >Discount</label
+          <label htmlFor="fee" class="block text-gray-300 text-sm font-bold"
+            >Fee</label
           >
           <p-inputNumber
-            inputId="discount"
-            formControlName="discount"
+            inputId="fee"
+            formControlName="fee"
             styleClass="w-full"
           ></p-inputNumber>
         </div>
@@ -96,8 +94,22 @@ import { Observable } from 'rxjs';
             styleClass="w-full"
           ></p-inputNumber>
         </div>
+        <div class="flex flex-col gap-1 w-1/2">
+          <label
+            htmlFor="discount"
+            class="block text-gray-300 text-sm font-bold"
+            >Discount</label
+          >
+          <p-inputNumber
+            inputId="discount"
+            formControlName="discount"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div>
         <div
-          class="flex flex-col gap-1 w-1/2"
+          class="flex flex-col gap-1"
           *ngIf="categories$ | async as categories"
         >
           <label
@@ -120,6 +132,7 @@ import { Observable } from 'rxjs';
         [label]="modalType"
         type="submit"
         styleClass="p-button-success"
+        [loading]="isCreateLoading"
       ></p-button>
     </div>
   </form> `,
@@ -136,6 +149,7 @@ export class ProductDialogComponent implements OnInit {
 
   public validateForm!: UntypedFormGroup;
   public modalType = 'Create';
+  public isCreateLoading = false;
 
   constructor(public modalConfig: DynamicDialogConfig) {}
 
@@ -155,6 +169,8 @@ export class ProductDialogComponent implements OnInit {
 
   public submitForm(): void {
     if (this.validateForm.valid) {
+      this.isCreateLoading = true;
+      this.validateForm.disable();
       if (this.modalType === 'Create') {
         this.productService
           .createProduct(this.validateForm.value)
@@ -162,9 +178,12 @@ export class ProductDialogComponent implements OnInit {
           .subscribe({
             next: () => {
               this.ref.close(true);
+              this.isCreateLoading = false;
             },
             error: (e) => {
               console.log(e);
+              this.isCreateLoading = false;
+              this.validateForm.enable();
             },
           });
       } else {
@@ -177,9 +196,12 @@ export class ProductDialogComponent implements OnInit {
           .subscribe({
             next: () => {
               this.ref.close(true);
+              this.isCreateLoading = false;
             },
             error: (e) => {
               console.log(e);
+              this.isCreateLoading = false;
+              this.validateForm.enable();
             },
           });
       }
@@ -198,6 +220,7 @@ export class ProductDialogComponent implements OnInit {
       product_name: [null, [Validators.required]],
       product_description: [null, [Validators.required]],
       price: [null, [Validators.required]],
+      fee: [null, [Validators.required]],
       discount: [null, [Validators.required]],
       product_quantity: [null, [Validators.required]],
       categories: [null, [Validators.required]],

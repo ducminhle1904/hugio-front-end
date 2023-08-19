@@ -33,3 +33,14 @@ export interface OrderResponseDTO extends ResponseModel {
     }[];
   };
 }
+
+export interface OrderCreateRequest {
+  request: {
+    customer_name: string | null;
+    customer_phone_number: string | null;
+    order_information: {
+      product_uid: string;
+      quantity: number;
+    }[];
+  };
+}

@@ -10,9 +10,10 @@ export interface User {
   user_uid: string;
   cif: string;
   email: string;
+  phone_number: string;
   address: string;
   full_name: string;
-  user_name: string;
+  username: string;
   roles: string[];
 }
 
@@ -47,13 +48,14 @@ export interface UserListResponse extends ResponseModel {
   };
 }
 
-export interface UserCreateRequest {
+export interface UserCreateEditRequest {
   request: {
     username: string;
     password: string;
     email: string;
     address: string;
     full_name: string;
+    phone_number: string;
     roles: string[];
   };
 }
