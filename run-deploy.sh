@@ -1,98 +1,97 @@
 #!/bin/bash
 
+dockerTag=$(date -d "$b 0 min" "+%Y%m%d%H%M%S")
+appShellDockerImage='hugio_app_shell'
+appAnalysisDockerImage='hugio_app_analysis'
+appAuthDockerImage='hugio_app_auth'
+appCashbookDockerImage='hugio_app_cashbook'
+appProductDockerImage='hugio_app_product'
+appSummaryDockerImage='hugio_app_summary'
+appUserDockerImage='hugio_app_user'
+appOrderDockerImage='hugio_app_order'
+k8sReplica=1
+
 echo '>>>>>>>>>>>>>> Build source'
 npm run build
 
 echo '>>>>>>>>>>>>>> Build shell image'
-docker build . -t hugio/fe:app_shell -f ./deploy/shell/Dockerfile
+docker build . -t $appShellDockerImage:$dockerTag -f ./deploy/shell/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build analysis image'
-docker build . -t hugio/fe:app_analysis -f ./deploy/analysis/Dockerfile
+docker build . -t $appAnalysisDockerImage:$dockerTag -f ./deploy/analysis/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build auth image'
-docker build . -t hugio/fe:app_auth -f ./deploy/auth/Dockerfile
+docker build . -t $appAuthDockerImage:$dockerTag -f ./deploy/auth/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build cashbook image'
-docker build . -t hugio/fe:app_cashbook -f ./deploy/cashbook/Dockerfile
+docker build . -t $appCashbookDockerImage:$dockerTag -f ./deploy/cashbook/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build product image'
-docker build . -t hugio/fe:app_product -f ./deploy/product/Dockerfile
+docker build . -t $appProductDockerImage:$dockerTag -f ./deploy/product/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build summary image'
-docker build . -t hugio/fe:app_summary -f ./deploy/summary/Dockerfile
+docker build . -t $appSummaryDockerImage:$dockerTag -f ./deploy/summary/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build user image'
-docker build . -t hugio/fe:app_user -f ./deploy/user/Dockerfile
+docker build . -t $appUserDockerImage:$dockerTag -f ./deploy/user/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build order image'
-docker build . -t hugio/fe:app_order -f ./deploy/order/Dockerfile
+docker build . -t $appOrderDockerImage:$dockerTag -f ./deploy/order/Dockerfile
 
 echo '>>>>>>>>>>>>>> Push shell image'
-kind load docker-image hugio/fe:app_shell
+kind load docker-image $appShellDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push analysis image'
-kind load docker-image hugio/fe:app_analysis
+kind load docker-image $appAnalysisDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push auth image'
-kind load docker-image hugio/fe:app_auth
+kind load docker-image $appAuthDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push cashbook image'
-kind load docker-image hugio/fe:app_cashbook
+kind load docker-image $appCashbookDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push product image'
-kind load docker-image hugio/fe:app_product
+kind load docker-image $appProductDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push summary image'
-kind load docker-image hugio/fe:app_summary
+kind load docker-image $appSummaryDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push user image'
-kind load docker-image hugio/fe:app_user
+kind load docker-image $appUserDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push order image'
-kind load docker-image hugio/fe:app_order
+kind load docker-image $appOrderDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Deploy shell image'
-kubectl delete -f ./deploy/shell/k8s -n frontend
-kubectl apply -f ./deploy/shell/k8s -n frontend
+helm upgrade -i --set image.name=$appShellDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appShellDockerImage ./deploy/shell/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy analysis image'
-kubectl delete -f ./deploy/analysis/k8s -n frontend
-kubectl apply -f ./deploy/analysis/k8s -n frontend
+helm upgrade -i --set image.name=$appAnalysisDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appAnalysisDockerImage ./deploy/analysis/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy auth image'
-kubectl delete -f ./deploy/auth/k8s -n frontend
-kubectl apply -f ./deploy/auth/k8s -n frontend
+helm upgrade -i --set image.name=$appAuthDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appAuthDockerImage ./deploy/auth/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy cashbook image'
-kubectl delete -f ./deploy/cashbook/k8s -n frontend
-kubectl apply -f ./deploy/cashbook/k8s -n frontend
+helm upgrade -i --set image.name=$appCashbookDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appCashbookDockerImage ./deploy/cashbook/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy product image'
-kubectl delete -f ./deploy/product/k8s -n frontend
-kubectl apply -f ./deploy/product/k8s -n frontend
+helm upgrade -i --set image.name=$appProductDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appProductDockerImage ./deploy/product/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy summary image'
-kubectl delete -f ./deploy/summary/k8s -n frontend
-kubectl apply -f ./deploy/summary/k8s -n frontend
+helm upgrade -i --set image.name=$appSummaryDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appSummaryDockerImage ./deploy/summary/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy user image'
-kubectl delete -f ./deploy/user/k8s -n frontend
-kubectl apply -f ./deploy/user/k8s -n frontend
+helm upgrade -i --set image.name=$appUserDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appUserDockerImage ./deploy/user/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy order image'
-kubectl delete -f ./deploy/order/k8s -n frontend
-kubectl apply -f ./deploy/order/k8s -n frontend
-
-echo '>>>>>>>>>>>>>> Clean kind image'
-sleep 5s
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_shell
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_analysis
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_auth
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_cashbook
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_product
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_summary
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_user
-docker exec -it kind-control-plane crictl rmi hugio/fe:app_order
+helm upgrade -i --set image.name=$appOrderDockerImage,image.tag=$dockerTag,replica=$k8sReplica -n $k8sNamespace $appOrderDockerImage ./deploy/order/helm_chart
 
 echo '>>>>>>>>>>>>>> Clean image'
-docker images | grep hugio | awk '{print $3}' | xargs docker rmi -f
+docker rmi $appShellDockerImage:$dockerTag
+docker rmi $appAnalysisDockerImage:$dockerTag
+docker rmi $appAuthDockerImage:$dockerTag
+docker rmi $appCashbookDockerImage:$dockerTag
+docker rmi $appProductDockerImage:$dockerTag
+docker rmi $appSummaryDockerImage:$dockerTag
+docker rmi $appUserDockerImage:$dockerTag
+docker rmi $appOrderDockerImage:$dockerTag
