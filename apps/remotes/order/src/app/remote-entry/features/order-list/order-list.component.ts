@@ -133,7 +133,7 @@ import { Observable } from 'rxjs';
                           <p class="font-normal">
                             Phone number:
                             {{
-                              order?.phone_number ||
+                              order?.customer_phone_number ||
                                 'Customer without phone number'
                             }}
                           </p>

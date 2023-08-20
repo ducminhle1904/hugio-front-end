@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
@@ -27,6 +33,7 @@ import { AppLayoutService } from '../layout/app-layout.service';
             >
           </a>
           <p-button
+            #menubutton
             styleClass="p-button-link"
             icon="pi pi-bars"
             (click)="layoutService.onMenuToggle()"
@@ -49,6 +56,8 @@ import { AppLayoutService } from '../layout/app-layout.service';
 export class TopbarComponent implements OnInit {
   readonly layoutService = inject(AppLayoutService);
   public items: MenuItem[] | undefined;
+
+  @ViewChild('menubutton') menuButton!: ElementRef;
 
   ngOnInit() {
     this.items = [

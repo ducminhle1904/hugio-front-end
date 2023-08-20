@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
+import { AppLayoutService } from '../layout/app-layout.service';
 import { MenuitemComponent } from './menuitem.component';
 
 @Component({
@@ -23,6 +24,8 @@ import { MenuitemComponent } from './menuitem.component';
 })
 export class SidebarComponent implements OnInit {
   model: any[] = [];
+
+  constructor(public layoutService: AppLayoutService) {}
 
   ngOnInit() {
     this.model = [
