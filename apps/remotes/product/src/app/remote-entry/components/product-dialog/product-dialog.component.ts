@@ -61,7 +61,7 @@ import { Observable } from 'rxjs';
       <div class="flex gap-3">
         <div class="flex flex-col gap-1 w-1/2">
           <label htmlFor="price" class="block text-gray-300 text-sm font-bold"
-            >Price</label
+            >Sale Price</label
           >
           <p-inputNumber
             inputId="price"
@@ -168,51 +168,45 @@ export class ProductDialogComponent implements OnInit {
   }
 
   public submitForm(): void {
-    if (this.validateForm.valid) {
-      this.isCreateLoading = true;
-      this.validateForm.disable();
-      if (this.modalType === 'Create') {
-        this.productService
-          .createProduct(this.validateForm.value)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: () => {
-              this.ref.close(true);
-              this.isCreateLoading = false;
-            },
-            error: (e) => {
-              console.log(e);
-              this.isCreateLoading = false;
-              this.validateForm.enable();
-            },
-          });
-      } else {
-        this.productService
-          .updateProduct({
+    if (!this.validateForm.valid) {
+      this.markFormControlsAsDirty();
+      return;
+    }
+
+    this.isCreateLoading = true;
+    this.validateForm.disable();
+
+    const productServiceCall =
+      this.modalType === 'Create'
+        ? this.productService.createProduct(this.validateForm.value)
+        : this.productService.updateProduct({
             ...this.validateForm.value,
             product_uid: this.modalConfig.data.data.product_uid,
-          })
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: () => {
-              this.ref.close(true);
-              this.isCreateLoading = false;
-            },
-            error: (e) => {
-              console.log(e);
-              this.isCreateLoading = false;
-              this.validateForm.enable();
-            },
           });
+
+    productServiceCall.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.handleCompletion(),
+      error: (e) => this.handleCompletion(e),
+    });
+  }
+
+  private markFormControlsAsDirty(): void {
+    Object.values(this.validateForm.controls).forEach((control) => {
+      if (control.invalid) {
+        control.markAsDirty();
+        control.updateValueAndValidity({ onlySelf: true });
       }
-    } else {
-      Object.values(this.validateForm.controls).forEach((control) => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
-        }
-      });
+    });
+  }
+
+  private handleCompletion(error?: any): void {
+    if (error) {
+      console.log(error);
+      this.validateForm.enable();
     }
+
+    this.isCreateLoading = false;
+    this.ref.close(true);
   }
 
   private initForm() {

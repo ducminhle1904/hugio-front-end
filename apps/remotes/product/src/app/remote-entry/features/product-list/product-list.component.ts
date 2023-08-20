@@ -20,7 +20,6 @@ import {
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 import { DialogModule } from 'primeng/dialog';
-import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
@@ -36,7 +35,6 @@ import { LoadingOverlayService } from '@ims/shared';
     CommonModule,
     CardModule,
     TableModule,
-    RatingModule,
     TagModule,
     ButtonModule,
     FormsModule,
@@ -80,9 +78,10 @@ import { LoadingOverlayService } from '@ims/shared';
         <ng-template pTemplate="header">
           <tr>
             <th>Name</th>
-            <th>Price</th>
+            <th>Fee</th>
+            <th>Sale Price</th>
             <th>Category</th>
-            <th>Reviews</th>
+            <th>Quantity</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -90,7 +89,12 @@ import { LoadingOverlayService } from '@ims/shared';
         <ng-template pTemplate="body" let-product>
           <tr>
             <td>{{ product.product_name }}</td>
-            <td>{{ product.price | currency : 'USD' : 'symbol' : '1.0-0' }}</td>
+            <td>
+              {{ product.fee | currency : 'VND' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+            <td>
+              {{ product.price | currency : 'VND' : 'symbol-narrow' : '1.0-0' }}
+            </td>
             <td>
               <ng-container *ngFor="let category of product.categories">
                 <p-chip
@@ -100,11 +104,7 @@ import { LoadingOverlayService } from '@ims/shared';
               </ng-container>
             </td>
             <td>
-              <p-rating
-                [ngModel]="product.rating"
-                [readonly]="true"
-                [cancel]="false"
-              ></p-rating>
+              {{ product.product_quantity }}
             </td>
             <td>
               <p-tag
@@ -175,7 +175,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   public quantityStatus(quantity: number): string {
-    if (quantity > 100) {
+    if (quantity > 10) {
       return 'success';
     } else if (quantity < 10) {
       return 'warning';

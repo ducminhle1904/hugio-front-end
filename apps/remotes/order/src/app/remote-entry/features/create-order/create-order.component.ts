@@ -102,7 +102,8 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
                       <p>
                         Price:
                         {{
-                          product.price | currency : 'USD' : 'symbol' : '1.0-0'
+                          product.price
+                            | currency : 'VND' : 'symbol-narrow' : '1.0-0'
                         }}
                       </p>
                       <p>Quantity: {{ product.stock }}</p>
@@ -184,7 +185,8 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
                     <ng-template pTemplate="output"
                       ><div class="flex justify-between">
                         {{
-                          product.price | currency : 'USD' : 'symbol' : '1.0-0'
+                          product.price
+                            | currency : 'VND' : 'symbol-narrow' : '1.0-0'
                         }}<i
                           class="p-toolbar-separator pi pi-pencil ml-2"
                         ></i></div
@@ -194,7 +196,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
                 <td class="font-bold">
                   {{
                     product.price * product.product_quantity
-                      | currency : 'USD' : 'symbol' : '1.0-0'
+                      | currency : 'VND' : 'symbol-narrow' : '1.0-0'
                   }}
                 </td>
               </tr>
@@ -228,7 +230,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
                   inputId="guest"
                   [(ngModel)]="isGuest"
                 ></p-checkbox>
-                <label for="guest">Walkin Guest</label>
+                <label for="guest">Guest</label>
               </div>
             </div>
 
@@ -253,7 +255,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
                 {{
                   selectedProducts
                     | calculateTotalPrice
-                    | currency : 'USD' : 'symbol' : '1.0-0'
+                    | currency : 'VND' : 'symbol-narrow' : '1.0-0'
                 }}
               </p>
             </div>
@@ -263,7 +265,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
               <p class="text-2xl">
                 {{
                   (selectedProducts | calculateTotalPrice) * 0.1
-                    | currency : 'USD' : 'symbol' : '1.0-0'
+                    | currency : 'VND' : 'symbol-narrow' : '1.0-0'
                 }}
               </p>
             </div>

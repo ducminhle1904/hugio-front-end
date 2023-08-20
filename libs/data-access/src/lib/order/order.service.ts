@@ -1,6 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { OrderCreateRequest, OrderResponseDTO, ResponseModel } from '@ims/core';
+import {
+  OrderCreateRequest,
+  OrderResponse,
+  OrderStatisticRequest,
+  OrderStatisticResponse,
+  ResponseModel,
+} from '@ims/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -15,13 +21,34 @@ export class OrderService {
     return this.http.post<ResponseModel>('/order_service/order/place', request);
   }
 
-  public queryListOrder(): Observable<OrderResponseDTO> {
-    return this.http.post<OrderResponseDTO>('/order_service/order/all', {
+  public queryListOrder(): Observable<OrderResponse> {
+    return this.http.post<OrderResponse>('/order_service/order/all', {
       request: {
         page_number: 1,
         page_size: 100,
         sort: 'ASC',
       },
+    });
+  }
+
+  public queryOrderStatistic(
+    request: OrderStatisticRequest
+  ): Observable<OrderStatisticResponse> {
+    return this.http.post<OrderStatisticResponse>(
+      '/order_service/order/statistic',
+      request
+    );
+  }
+
+  public confirmOrder(order_code: string): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/order_service/order/confirm', {
+      request: order_code,
+    });
+  }
+
+  public cancelOrder(order_code: string): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/order_service/order/cancel', {
+      request: order_code,
     });
   }
 }
