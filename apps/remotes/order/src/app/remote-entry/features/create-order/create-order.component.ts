@@ -10,7 +10,12 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { OrderCreateRequest, Product, User } from '@ims/core';
+import {
+  NotificationService,
+  OrderCreateRequest,
+  Product,
+  User,
+} from '@ims/core';
 import { OrderService, ProductService, UserService } from '@ims/data-access';
 import {
   CalculateTotalPricePipe,
@@ -24,7 +29,6 @@ import {
   NgxScannerQrcodeModule,
   ScannerQRCodeResult,
 } from 'ngx-scanner-qrcode';
-import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -55,7 +59,7 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
     NgxScannerQrcodeModule,
     DropdownModule,
   ],
-  template: `<p-toast></p-toast>
+  template: `
     <div class="flex gap-2 h-screen w-screen p-3">
       <div class="w-3/4">
         <p-card styleClass="h-full w-full">
@@ -300,7 +304,8 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
           </ng-template>
         </p-card>
       </div>
-    </div> `,
+    </div>
+  `,
   styles: [
     `
       :host ::ng-deep .p-card .p-card-body {
@@ -315,7 +320,6 @@ import { ToolbarComponent } from '../../ui/toolbar/toolbar.component';
       }
     `,
   ],
-  providers: [MessageService],
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class CreateOrderComponent implements OnInit {
@@ -325,8 +329,8 @@ export class CreateOrderComponent implements OnInit {
   readonly destroyRef = inject(DestroyRef);
   readonly document = inject(DOCUMENT);
   readonly router = inject(Router);
-  readonly messageService = inject(MessageService);
   readonly loadingOverlayService = inject(LoadingOverlayService);
+  readonly notificationService = inject(NotificationService);
 
   @ViewChild('action') action!: NgxScannerQrcodeComponent;
 
@@ -433,7 +437,7 @@ export class CreateOrderComponent implements OnInit {
 
   private handleOrderSuccess(): void {
     this.loadingOverlayService.hide();
-    this.messageService.add({
+    this.notificationService.showNotification({
       severity: 'success',
       summary: 'Success',
       detail: 'Order successfully',
@@ -444,7 +448,7 @@ export class CreateOrderComponent implements OnInit {
 
   private handleOrderError(): void {
     this.loadingOverlayService.hide();
-    this.messageService.add({
+    this.notificationService.showNotification({
       severity: 'error',
       summary: 'Failed',
       detail: 'Fail to place an order, please try again!',
@@ -473,7 +477,7 @@ export class CreateOrderComponent implements OnInit {
           this.clients = data.response.content;
         },
         error: () => {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'error',
             summary: 'Error',
             detail: 'There is an error when getting clients',
@@ -497,7 +501,7 @@ export class CreateOrderComponent implements OnInit {
           });
         },
         error: () => {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'error',
             summary: 'Error',
             detail: 'There is an error when getting products',

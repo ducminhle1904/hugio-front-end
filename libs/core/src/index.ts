@@ -11,6 +11,7 @@ export * from './lib/services/jwt.service';
 export * from './lib/services/user.service';
 export * from './lib/services/loading.service';
 export * from './lib/services/layout.service';
+export * from './lib/services/notification.service';
 
 /* Guards */
 export * from './lib/guards/authentication.guard';

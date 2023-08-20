@@ -89,6 +89,7 @@ import {
             label="Sign in"
             type="submit"
             styleClass="p-button-success"
+            [loading]="isLoading"
           ></p-button>
         </form>
       </div>
@@ -99,6 +100,7 @@ import {
 })
 export class RemoteEntryComponent implements OnInit {
   validateForm!: UntypedFormGroup;
+  isLoading = false;
 
   constructor(
     private userService: UserService,
@@ -120,12 +122,15 @@ export class RemoteEntryComponent implements OnInit {
 
   public submitForm(): void {
     if (this.validateForm.valid) {
+      this.isLoading = true;
       this.userService.login(this.validateForm.value).subscribe({
         next: (res) => {
           console.log(res);
+          this.isLoading = false;
         },
         error: (e) => {
           console.log(e);
+          this.isLoading = false;
         },
       });
     } else {

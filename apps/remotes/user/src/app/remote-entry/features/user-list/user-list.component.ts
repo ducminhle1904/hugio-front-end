@@ -8,14 +8,13 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { User } from '@ims/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { NotificationService, User } from '@ims/core';
+import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
 import { UserDialogComponent } from '../../components/user-dialog/user-dialog.component';
 import {
   DialogService,
@@ -33,7 +32,6 @@ import { LoadingOverlayService } from '@ims/shared';
     CommonModule,
     CardModule,
     TableModule,
-    ToastModule,
     ConfirmPopupModule,
     FormsModule,
     ButtonModule,
@@ -41,75 +39,74 @@ import { LoadingOverlayService } from '@ims/shared';
     UserDialogComponent,
     DynamicDialogModule,
   ],
-  template: `<p-toast styleClass="toast"></p-toast>
-    <p-card header="Client List" styleClass="h-full">
-      <p-table
-        [value]="users"
-        styleClass="p-datatable-sm"
-        [paginator]="true"
-        [rows]="10"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        [scrollable]="true"
-        scrollHeight="'100%'"
-      >
-        <ng-template pTemplate="caption">
-          <p-button
-            icon="pi pi-plus"
-            label="Add user"
-            styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
-            (click)="createUser()"
-          ></p-button>
-        </ng-template>
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-user>
-          <tr>
-            <td>{{ user.full_name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.phone_number }}</td>
-            <td>{{ user.address }}</td>
-            <td>
-              <p-tag
-                [value]="user.active ? 'Active' : 'Inactive'"
-                [severity]="user.active ? 'success' : 'danger'"
-              ></p-tag>
-            </td>
-            <td>
-              <div class="flex gap-1" *ngIf="user.active; else reactive">
-                <p-button
-                  icon="pi pi-pencil"
-                  styleClass="p-button-sm p-button-info"
-                  (click)="updateUser(user)"
-                ></p-button>
-                <p-confirmPopup [key]="user.user_uid"></p-confirmPopup>
-                <p-button
-                  icon="pi pi-trash"
-                  styleClass="p-button-sm p-button-danger"
-                  (click)="confirm($event, user.user_uid)"
-                ></p-button>
-              </div>
-              <ng-template #reactive>
-                <p-button
-                  icon="pi pi-replay"
-                  styleClass="p-button-sm p-button-success"
-                  (click)="activeUser(user.user_uid)"
-                ></p-button>
-              </ng-template>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>`,
+  template: ` <p-card header="Client List" styleClass="h-full">
+    <p-table
+      [value]="users"
+      styleClass="p-datatable-sm"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [scrollable]="true"
+      scrollHeight="'100%'"
+    >
+      <ng-template pTemplate="caption">
+        <p-button
+          icon="pi pi-plus"
+          label="Add user"
+          styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
+          (click)="createUser()"
+        ></p-button>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{ user.full_name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone_number }}</td>
+          <td>{{ user.address }}</td>
+          <td>
+            <p-tag
+              [value]="user.active ? 'Active' : 'Inactive'"
+              [severity]="user.active ? 'success' : 'danger'"
+            ></p-tag>
+          </td>
+          <td>
+            <div class="flex gap-1" *ngIf="user.active; else reactive">
+              <p-button
+                icon="pi pi-pencil"
+                styleClass="p-button-sm p-button-info"
+                (click)="updateUser(user)"
+              ></p-button>
+              <p-confirmPopup [key]="user.user_uid"></p-confirmPopup>
+              <p-button
+                icon="pi pi-trash"
+                styleClass="p-button-sm p-button-danger"
+                (click)="confirm($event, user.user_uid)"
+              ></p-button>
+            </div>
+            <ng-template #reactive>
+              <p-button
+                icon="pi pi-replay"
+                styleClass="p-button-sm p-button-success"
+                (click)="activeUser(user.user_uid)"
+              ></p-button>
+            </ng-template>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>`,
   styles: [
     `
       :host ::ng-deep .p-datatable-wrapper {
@@ -127,15 +124,15 @@ import { LoadingOverlayService } from '@ims/shared';
     `,
   ],
   encapsulation: ViewEncapsulation.Emulated,
-  providers: [ConfirmationService, MessageService, DialogService],
+  providers: [ConfirmationService, DialogService],
 })
 export class UserListComponent implements OnInit, OnDestroy {
   readonly userService = inject(UserService);
   readonly confirmationService = inject(ConfirmationService);
-  readonly messageService = inject(MessageService);
   readonly dialogService = inject(DialogService);
   readonly destroyRef = inject(DestroyRef);
   readonly loadingOverlayService = inject(LoadingOverlayService);
+  readonly notificationService = inject(NotificationService);
 
   public users: User[] = [];
   private ref: DynamicDialogRef | undefined;
@@ -158,7 +155,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((success: boolean) => {
         if (success) {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'info',
             summary: 'Successfully',
             detail: 'User have been created',
@@ -183,10 +180,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((success: boolean) => {
         if (success) {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'info',
             summary: 'Successfully',
-            detail: 'Product have been updated',
+            detail: 'User have been updated',
           });
           this.fetchUsers();
         }
@@ -199,7 +196,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'info',
             summary: 'Successfully',
             detail: 'User have been activate',
@@ -225,7 +222,7 @@ export class UserListComponent implements OnInit, OnDestroy {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
-              this.messageService.add({
+              this.notificationService.showNotification({
                 severity: 'info',
                 summary: 'Delete successfully',
                 detail: 'User have been deleted',
@@ -233,20 +230,13 @@ export class UserListComponent implements OnInit, OnDestroy {
               this.fetchUsers();
             },
             error: (e) => {
-              this.messageService.add({
+              this.notificationService.showNotification({
                 severity: 'error',
                 summary: 'Error happend',
                 detail: e,
               });
             },
           });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rejected',
-          detail: 'You have rejected',
-        });
       },
     });
   }

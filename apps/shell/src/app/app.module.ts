@@ -17,6 +17,8 @@ import {
   TimeoutInterceptor,
 } from '@ims/core';
 import { EMPTY } from 'rxjs';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 registerLocaleData(en);
 
@@ -34,6 +36,7 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    ToastModule,
   ],
   providers: [
     {
@@ -46,6 +49,7 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TimeoutInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    MessageService,
   ],
   bootstrap: [AppComponent],
 })

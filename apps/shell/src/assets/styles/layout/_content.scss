@@ -1,9 +1,7 @@
 .layout-main-container {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  justify-content: space-between;
-  padding: 7rem 2rem 2rem 4rem;
+  height: 100vh;
+  padding: 5rem 2rem 2rem 3rem;
   transition: margin-left $transitionDuration;
 }
 

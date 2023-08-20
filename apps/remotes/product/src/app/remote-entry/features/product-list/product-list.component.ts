@@ -8,8 +8,8 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Product } from '@ims/core';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { NotificationService, Product } from '@ims/core';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
@@ -22,7 +22,6 @@ import {
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductService } from '@ims/data-access';
@@ -40,13 +39,11 @@ import { LoadingOverlayService } from '@ims/shared';
     FormsModule,
     ChipModule,
     ConfirmPopupModule,
-    ToastModule,
     ProductDialogComponent,
     DynamicDialogModule,
     DialogModule,
   ],
-  template: ` <p-toast styleClass="toast"></p-toast>
-    <p-dialog
+  template: ` <p-dialog
       header="QR code"
       [(visible)]="qrCodeModal"
       [style]="{ width: '250px' }"
@@ -153,15 +150,15 @@ import { LoadingOverlayService } from '@ims/shared';
     `,
   ],
   encapsulation: ViewEncapsulation.Emulated,
-  providers: [ConfirmationService, MessageService, DialogService],
+  providers: [ConfirmationService, DialogService],
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   readonly productService = inject(ProductService);
   readonly confirmationService = inject(ConfirmationService);
-  readonly messageService = inject(MessageService);
   readonly dialogService = inject(DialogService);
   readonly destroyRef = inject(DestroyRef);
   readonly loadingOverlayService = inject(LoadingOverlayService);
+  readonly notificationService = inject(NotificationService);
 
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
@@ -207,7 +204,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
-              this.messageService.add({
+              this.notificationService.showNotification({
                 severity: 'info',
                 summary: 'Delete successfully',
                 detail: 'Product have been deleted',
@@ -215,7 +212,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
               this.fetchProducts();
             },
             error: (e) => {
-              this.messageService.add({
+              this.notificationService.showNotification({
                 severity: 'error',
                 summary: 'Error happend',
                 detail: e,
@@ -224,7 +221,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
           });
       },
       reject: () => {
-        this.messageService.add({
+        this.notificationService.showNotification({
           severity: 'error',
           summary: 'Rejected',
           detail: 'You have rejected',
@@ -247,7 +244,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((success: boolean) => {
         if (success) {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'info',
             summary: 'Successfully',
             detail: 'Product have been created',
@@ -272,7 +269,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((success: boolean) => {
         if (success) {
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'info',
             summary: 'Successfully',
             detail: 'Product have been updated',
@@ -295,7 +292,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loadingOverlayService.hide();
-          this.messageService.add({
+          this.notificationService.showNotification({
             severity: 'error',
             summary: 'Failed',
             detail: 'Fail to fetch QR code',

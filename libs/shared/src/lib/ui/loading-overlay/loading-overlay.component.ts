@@ -28,8 +28,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
       .loading-overlay {
         position: fixed;
         top: 5rem;
-        left: 22rem;
-        width: calc(100vw - 23rem);
+        left: 21.7rem;
+        width: calc(100vw - 24.7rem);
         height: calc(100vh - 7rem);
         display: flex;
         align-items: center;
