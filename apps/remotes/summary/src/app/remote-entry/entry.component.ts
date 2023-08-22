@@ -13,7 +13,10 @@ import { OrderStatisticResponse } from '@ims/core';
       ></ims-order-statistic>
       <ims-order-statistic
         [title]="'Total sales'"
-        [figure]="statisticData?.response?.total_sale_in_month"
+        [figure]="
+          statisticData?.response?.total_sale_in_month
+            | currency : 'VND' : 'symbol-narrow' : '1.0-0'
+        "
       ></ims-order-statistic>
       <ims-order-statistic
         [title]="'Cancelled order'"

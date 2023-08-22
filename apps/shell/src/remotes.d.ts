@@ -11,3 +11,5 @@ declare module 'remotes-product/Module';
 declare module 'auth/Routes';
 
 declare module 'remotes-order/Module';
+
+declare module 'remotes-hugibot/Module';

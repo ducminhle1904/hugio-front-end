@@ -27,6 +27,6 @@ import { ButtonModule } from 'primeng/button';
 })
 export class OrderStatisticComponent {
   @Input({ required: true }) title = '';
-  @Input() figure: number | undefined;
+  @Input() figure: number | string | undefined | null;
   @Input() percent: number | undefined;
 }
