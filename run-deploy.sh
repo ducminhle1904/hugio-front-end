@@ -9,6 +9,7 @@ appProductDockerImage='hugio/app_product'
 appSummaryDockerImage='hugio/app_summary'
 appUserDockerImage='hugio/app_user'
 appOrderDockerImage='hugio/app_order'
+appHugibotDockerImage='hugio/app_hugibot'
 k8sNamespace='frontend'
 k8sReplica=1
 
@@ -39,6 +40,9 @@ docker build . -t $appUserDockerImage:$dockerTag -f ./deploy/user/Dockerfile
 echo '>>>>>>>>>>>>>> Build order image'
 docker build . -t $appOrderDockerImage:$dockerTag -f ./deploy/order/Dockerfile
 
+echo '>>>>>>>>>>>>>> Build hugibot image'
+docker build . -t $appHugibotDockerImage:$dockerTag -f ./deploy/hugibot/Dockerfile
+
 echo '>>>>>>>>>>>>>> Push shell image'
 kind load docker-image $appShellDockerImage:$dockerTag
 
@@ -62,6 +66,9 @@ kind load docker-image $appUserDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Push order image'
 kind load docker-image $appOrderDockerImage:$dockerTag
+
+echo '>>>>>>>>>>>>>> Push order image'
+kind load docker-image $appHugibotDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Deploy shell image'
 helm upgrade -i --set image.name=$appShellDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4200 -n $k8sNamespace app-shell ./deploy/shell/helm_chart
@@ -87,6 +94,9 @@ helm upgrade -i --set image.name=$appUserDockerImage,image.tag=$dockerTag,replic
 echo '>>>>>>>>>>>>>> Deploy order image'
 helm upgrade -i --set image.name=$appOrderDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4207 -n $k8sNamespace app-order ./deploy/order/helm_chart
 
+echo '>>>>>>>>>>>>>> Deploy order image'
+helm upgrade -i --set image.name=$appHugibotDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4208 -n $k8sNamespace app-hugibot ./deploy/hugibot/helm_chart
+
 echo '>>>>>>>>>>>>>> Clean image'
 docker rmi $appShellDockerImage:$dockerTag
 docker rmi $appAnalysisDockerImage:$dockerTag
@@ -96,3 +106,4 @@ docker rmi $appProductDockerImage:$dockerTag
 docker rmi $appSummaryDockerImage:$dockerTag
 docker rmi $appUserDockerImage:$dockerTag
 docker rmi $appOrderDockerImage:$dockerTag
+docker rmi $appHugibotDockerImage:$dockerTag
