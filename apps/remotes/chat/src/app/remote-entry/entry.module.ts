@@ -7,9 +7,10 @@ import { remoteRoutes } from './entry.routes';
 
 import { ImageModule } from 'primeng/image';
 import { ButtonModule } from 'primeng/button';
-import { ChipModule } from 'primeng/chip';
-import { AvatarModule } from 'primeng/avatar';
 import { CardModule } from 'primeng/card';
+import { UserBarComponent } from './ui/user-bar/user-bar.component';
+import { HugibotToolbarComponent } from './ui/hugibot-toolbar/hugibot-toolbar.component';
+import { ChatContentComponent } from './ui/chat-content/chat-content.component';
 
 @NgModule({
   declarations: [RemoteEntryComponent],
@@ -18,9 +19,10 @@ import { CardModule } from 'primeng/card';
     RouterModule.forChild(remoteRoutes),
     ImageModule,
     ButtonModule,
-    ChipModule,
-    AvatarModule,
     CardModule,
+    UserBarComponent,
+    HugibotToolbarComponent,
+    ChatContentComponent,
   ],
   providers: [],
 })
