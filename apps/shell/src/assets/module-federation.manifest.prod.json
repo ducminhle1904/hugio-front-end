@@ -5,5 +5,6 @@
   "remotes-user": "https://cf1f5953c8cf.ngrok.app",
   "remotes-product": "https://6715e3c762af.ngrok.app",
   "remotes-auth": "https://82e7b7b1ed7b.ngrok.app",
-  "remotes-order": "https://37418714dc9a.ngrok.app"
+  "remotes-order": "https://37418714dc9a.ngrok.app",
+  "remotes-chat": "https://8de6d89147ea.ngrok.app"
 }
