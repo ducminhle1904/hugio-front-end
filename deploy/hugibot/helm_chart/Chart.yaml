@@ -1,0 +1,9 @@
+apiVersion: v2
+name: hugibot-app
+description: A Helm chart for Kubernetes to deploy the hugibot-app service
+
+type: application
+
+version: 0.1.0
+
+appVersion: latest

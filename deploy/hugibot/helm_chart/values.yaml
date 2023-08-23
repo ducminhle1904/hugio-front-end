@@ -1,0 +1,7 @@
+image:
+  name: hugio
+  tag: fe
+tcp_port: 90
+tcp_target_port: 90
+tcp_svc_type: NodePort
+replica: 1

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hugio-app-hugibot
+spec:
+  selector:
+    matchLabels:
+      app: hugio-app-hugibot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hugio-app-hugibot
+    spec:
+      containers:
+        - name: hugio-app-hugibot
+          image: hugio/fe:app_hugibot
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 90
+          env:
+            - name: TZ
+              value: 'Asia/Ho_Chi_Minh'
