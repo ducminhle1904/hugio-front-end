@@ -1,10 +1,3 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
 import { Component } from '@angular/core';
 
 @Component({
@@ -35,18 +28,9 @@ import { Component } from '@angular/core';
       }
       :host ::ng-deep .p-card-content {
         height: calc(100% - 235px);
+        overflow: auto;
       }
     `,
-  ],
-  animations: [
-    trigger('fadeOut', [
-      state('void', style({ opacity: 0 })),
-      transition(':leave', [animate(300)]),
-    ]),
-    trigger('fadeIn', [
-      state('void', style({ opacity: 0 })),
-      transition(':enter', [animate(300)]),
-    ]),
   ],
 })
 export class RemoteEntryComponent {

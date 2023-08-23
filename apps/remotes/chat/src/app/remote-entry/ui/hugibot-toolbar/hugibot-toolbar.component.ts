@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ToolbarModule } from 'primeng/toolbar';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ChipModule } from 'primeng/chip';
 import { TabViewModule } from 'primeng/tabview';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ChatService } from '../../service/chat.service';
 
 @Component({
   selector: 'ims-hugibot-toolbar',
@@ -18,6 +19,7 @@ import { TabViewModule } from 'primeng/tabview';
               [label]="question.label"
               icon="pi pi-question-circle"
               styleClass="cursor-pointer"
+              (click)="outputQuestion(question.label)"
             ></p-chip>
           </div>
         </p-tabPanel>
@@ -27,6 +29,8 @@ import { TabViewModule } from 'primeng/tabview';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HugibotToolbarComponent {
+  readonly chatService = inject(ChatService);
+
   tabs = [
     {
       header: 'Product Availability',
@@ -77,4 +81,8 @@ export class HugibotToolbarComponent {
       ],
     },
   ];
+
+  public outputQuestion(question: string) {
+    this.chatService.sendMessageAndReceiveResponse(question);
+  }
 }

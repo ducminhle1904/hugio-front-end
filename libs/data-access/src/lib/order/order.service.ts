@@ -51,4 +51,10 @@ export class OrderService {
       request: order_code,
     });
   }
+
+  public chatGpt(question: string): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>('/order_service/chat', {
+      request: question,
+    });
+  }
 }

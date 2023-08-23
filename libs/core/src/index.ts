@@ -24,3 +24,6 @@ export * from './lib/models/order.model';
 
 /* Utils */
 export * from './lib/utils/utils';
+
+/* Directives */
+export * from './lib/directives/show-authed.directive';
