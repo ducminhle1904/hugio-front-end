@@ -9,7 +9,7 @@ appProductDockerImage='hugio/app_product'
 appSummaryDockerImage='hugio/app_summary'
 appUserDockerImage='hugio/app_user'
 appOrderDockerImage='hugio/app_order'
-appHugibotDockerImage='hugio/app_hugibot'
+appChatDockerImage='hugio/app_chat'
 k8sNamespace='frontend'
 k8sReplica=1
 
@@ -41,7 +41,7 @@ echo '>>>>>>>>>>>>>> Build order image'
 docker build . -t $appOrderDockerImage:$dockerTag -f ./deploy/order/Dockerfile
 
 echo '>>>>>>>>>>>>>> Build chat image'
-docker build . -t $appHugibotDockerImage:$dockerTag -f ./deploy/chat/Dockerfile
+docker build . -t $appChatDockerImage:$dockerTag -f ./deploy/chat/Dockerfile
 
 echo '>>>>>>>>>>>>>> Push shell image'
 kind load docker-image $appShellDockerImage:$dockerTag
@@ -67,8 +67,8 @@ kind load docker-image $appUserDockerImage:$dockerTag
 echo '>>>>>>>>>>>>>> Push order image'
 kind load docker-image $appOrderDockerImage:$dockerTag
 
-echo '>>>>>>>>>>>>>> Push order image'
-kind load docker-image $appHugibotDockerImage:$dockerTag
+echo '>>>>>>>>>>>>>> Push chat image'
+kind load docker-image $appChatDockerImage:$dockerTag
 
 echo '>>>>>>>>>>>>>> Deploy shell image'
 helm upgrade -i --set image.name=$appShellDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4200 -n $k8sNamespace app-shell ./deploy/shell/helm_chart
@@ -95,7 +95,7 @@ echo '>>>>>>>>>>>>>> Deploy order image'
 helm upgrade -i --set image.name=$appOrderDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4207 -n $k8sNamespace app-order ./deploy/order/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy order image'
-helm upgrade -i --set image.name=$appHugibotDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4208 -n $k8sNamespace app-chat ./deploy/chat/helm_chart
+helm upgrade -i --set image.name=$appChatDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4208 -n $k8sNamespace app-chat ./deploy/chat/helm_chart
 
 echo '>>>>>>>>>>>>>> Clean image'
 docker rmi $appShellDockerImage:$dockerTag
@@ -106,4 +106,4 @@ docker rmi $appProductDockerImage:$dockerTag
 docker rmi $appSummaryDockerImage:$dockerTag
 docker rmi $appUserDockerImage:$dockerTag
 docker rmi $appOrderDockerImage:$dockerTag
-docker rmi $appHugibotDockerImage:$dockerTag
+docker rmi $appChatDockerImage:$dockerTag
