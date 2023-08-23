@@ -1,28 +1,28 @@
 {
-  "name": "remotes-hugibot",
+  "name": "remotes-chat",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "ims",
-  "sourceRoot": "apps/remotes/hugibot/src",
+  "sourceRoot": "apps/remotes/chat/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/remotes/hugibot",
-        "index": "apps/remotes/hugibot/src/index.html",
-        "main": "apps/remotes/hugibot/src/main.ts",
+        "outputPath": "dist/apps/remotes/chat",
+        "index": "apps/remotes/chat/src/index.html",
+        "main": "apps/remotes/chat/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "apps/remotes/hugibot/tsconfig.app.json",
+        "tsConfig": "apps/remotes/chat/tsconfig.app.json",
         "assets": [
-          "apps/remotes/hugibot/src/favicon.ico",
-          "apps/remotes/hugibot/src/assets"
+          "apps/remotes/chat/src/favicon.ico",
+          "apps/remotes/chat/src/assets"
         ],
-        "styles": ["apps/remotes/hugibot/src/styles.css"],
+        "styles": ["apps/remotes/chat/src/styles.css"],
         "scripts": [],
         "customWebpackConfig": {
-          "path": "apps/remotes/hugibot/webpack.config.js"
+          "path": "apps/remotes/chat/webpack.config.js"
         }
       },
       "configurations": {
@@ -41,7 +41,7 @@
           ],
           "outputHashing": "all",
           "customWebpackConfig": {
-            "path": "apps/remotes/hugibot/webpack.prod.config.js"
+            "path": "apps/remotes/chat/webpack.prod.config.js"
           }
         },
         "development": {
@@ -63,10 +63,10 @@
       },
       "configurations": {
         "production": {
-          "browserTarget": "remotes-hugibot:build:production"
+          "browserTarget": "remotes-chat:build:production"
         },
         "development": {
-          "browserTarget": "remotes-hugibot:build:development"
+          "browserTarget": "remotes-chat:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "remotes-hugibot:build"
+        "browserTarget": "remotes-chat:build"
       }
     },
     "lint": {
@@ -82,8 +82,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "apps/remotes/hugibot/**/*.ts",
-          "apps/remotes/hugibot/**/*.html"
+          "apps/remotes/chat/**/*.ts",
+          "apps/remotes/chat/**/*.html"
         ]
       }
     },
@@ -91,7 +91,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/remotes/hugibot/jest.config.ts",
+        "jestConfig": "apps/remotes/chat/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -105,16 +105,16 @@
       "executor": "@nx/web:file-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "remotes-hugibot:build",
+        "buildTarget": "remotes-chat:build",
         "port": 4208,
         "watch": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "remotes-hugibot:build:development"
+          "buildTarget": "remotes-chat:build:development"
         },
         "production": {
-          "buildTarget": "remotes-hugibot:build:production"
+          "buildTarget": "remotes-chat:build:production"
         }
       }
     }

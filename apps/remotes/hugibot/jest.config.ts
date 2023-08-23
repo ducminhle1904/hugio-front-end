@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'remotes-hugibot',
+  displayName: 'remotes-chat',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../../coverage/apps/remotes/hugibot',
+  coverageDirectory: '../../../coverage/apps/remotes/chat',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

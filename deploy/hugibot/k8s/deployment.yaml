@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hugio-app-hugibot
+  name: hugio-app-chat
 spec:
   selector:
     matchLabels:
-      app: hugio-app-hugibot
+      app: hugio-app-chat
   replicas: 1
   template:
     metadata:
       labels:
-        app: hugio-app-hugibot
+        app: hugio-app-chat
     spec:
       containers:
-        - name: hugio-app-hugibot
+        - name: hugio-app-chat
           image: hugio/fe:app_hugibot
           imagePullPolicy: IfNotPresent
           ports:

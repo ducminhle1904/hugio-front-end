@@ -89,9 +89,9 @@ export const appRoutes: Route[] = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'remotes-hugibot',
+        path: 'remotes-chat',
         loadChildren: () =>
-          loadRemoteModule('remotes-hugibot', './Module').then(
+          loadRemoteModule('remotes-chat', './Module').then(
             (m) => m.RemoteEntryModule
           ),
       },

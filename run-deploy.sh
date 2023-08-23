@@ -40,8 +40,8 @@ docker build . -t $appUserDockerImage:$dockerTag -f ./deploy/user/Dockerfile
 echo '>>>>>>>>>>>>>> Build order image'
 docker build . -t $appOrderDockerImage:$dockerTag -f ./deploy/order/Dockerfile
 
-echo '>>>>>>>>>>>>>> Build hugibot image'
-docker build . -t $appHugibotDockerImage:$dockerTag -f ./deploy/hugibot/Dockerfile
+echo '>>>>>>>>>>>>>> Build chat image'
+docker build . -t $appHugibotDockerImage:$dockerTag -f ./deploy/chat/Dockerfile
 
 echo '>>>>>>>>>>>>>> Push shell image'
 kind load docker-image $appShellDockerImage:$dockerTag
@@ -95,7 +95,7 @@ echo '>>>>>>>>>>>>>> Deploy order image'
 helm upgrade -i --set image.name=$appOrderDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4207 -n $k8sNamespace app-order ./deploy/order/helm_chart
 
 echo '>>>>>>>>>>>>>> Deploy order image'
-helm upgrade -i --set image.name=$appHugibotDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4208 -n $k8sNamespace app-hugibot ./deploy/hugibot/helm_chart
+helm upgrade -i --set image.name=$appHugibotDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4208 -n $k8sNamespace app-chat ./deploy/chat/helm_chart
 
 echo '>>>>>>>>>>>>>> Clean image'
 docker rmi $appShellDockerImage:$dockerTag

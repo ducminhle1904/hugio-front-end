@@ -6,5 +6,5 @@
   "remotes-product": "http://localhost:4205",
   "remotes-auth": "http://localhost:4206",
   "remotes-order": "http://localhost:4207",
-  "remotes-hugibot": "http://localhost:4208"
+  "remotes-chat": "http://localhost:4208"
 }

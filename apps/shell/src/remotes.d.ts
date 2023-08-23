@@ -12,4 +12,4 @@ declare module 'auth/Routes';
 
 declare module 'remotes-order/Module';
 
-declare module 'remotes-hugibot/Module';
+declare module 'remotes-chat/Module';

@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'remotes-hugibot',
+  name: 'remotes-chat',
   exposes: {
-    './Module': 'apps/remotes/hugibot/src/app/remote-entry/entry.module.ts',
+    './Module': 'apps/remotes/chat/src/app/remote-entry/entry.module.ts',
   },
 };

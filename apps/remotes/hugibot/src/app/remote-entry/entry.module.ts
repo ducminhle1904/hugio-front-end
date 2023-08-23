@@ -9,6 +9,7 @@ import { ImageModule } from 'primeng/image';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { AvatarModule } from 'primeng/avatar';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [RemoteEntryComponent],
@@ -19,6 +20,7 @@ import { AvatarModule } from 'primeng/avatar';
     ButtonModule,
     ChipModule,
     AvatarModule,
+    CardModule,
   ],
   providers: [],
 })

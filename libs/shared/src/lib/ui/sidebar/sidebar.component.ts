@@ -96,9 +96,9 @@ export class SidebarComponent implements OnInit {
         label: 'APP',
         items: [
           {
-            label: 'HugiBot',
-            icon: 'pi pi-fw pi-android',
-            routerLink: ['/remotes-hugibot'],
+            label: 'Chat',
+            icon: 'pi pi-fw pi-comment',
+            routerLink: ['/remotes-chat'],
           },
           {
             label: 'Calendar',

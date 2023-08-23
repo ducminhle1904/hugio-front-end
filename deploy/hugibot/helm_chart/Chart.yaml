@@ -1,6 +1,6 @@
 apiVersion: v2
-name: hugibot-app
-description: A Helm chart for Kubernetes to deploy the hugibot-app service
+name: chat-app
+description: A Helm chart for Kubernetes to deploy the chat-app service
 
 type: application
 
