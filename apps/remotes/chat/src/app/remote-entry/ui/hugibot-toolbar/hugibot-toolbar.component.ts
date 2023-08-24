@@ -5,7 +5,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ChatService } from '../../service/chat.service';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import {
   trigger,
   state,
@@ -24,43 +24,48 @@ import { FormsModule } from '@angular/forms';
     ChipModule,
     TabViewModule,
     ButtonModule,
-    InputTextModule,
     FormsModule,
+    InputTextareaModule,
   ],
-  template: `<p class="font-bold">Choose topic you want to know</p>
-    <p-toolbar styleClass="overflow-auto">
-      <div [@toolbarAnimation]="showToolbar ? 'show' : 'hide'">
-        <p-tabView>
-          <p-tabPanel *ngFor="let tab of tabs" [header]="tab.header">
-            <div class="flex align-items-center gap-2">
-              <p-chip
-                *ngFor="let question of tab.questions; let qIndex = index"
-                [label]="question.label"
-                icon="pi pi-question-circle"
-                styleClass="cursor-pointer"
-                (click)="outputQuestion(question.label)"
-              ></p-chip>
-            </div>
-          </p-tabPanel>
-        </p-tabView>
-      </div>
-      <div [@toggleAnimation]="showInput ? 'show' : 'hide'">
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
-          <input type="text" pInputText [(ngModel)]="inputText" />
-        </span>
-      </div>
-
-      <div class="p-toolbar-group-end">
-        <p-button
-          [icon]="showToolbar ? 'pi pi-search' : 'pi pi-bars'"
-          [label]="showToolbar ? 'Free question' : 'Recommend question'"
-          iconPos="right"
-          styleClass="p-button-info"
-          (click)="toggleFreeText()"
-        ></p-button>
-      </div>
-    </p-toolbar>`,
+  template: `<p-button
+      [icon]="showToolbar ? 'pi pi-search' : 'pi pi-bars'"
+      [label]="showToolbar ? 'Free question' : 'Recommend question'"
+      iconPos="right"
+      styleClass="p-button-info mb-2"
+      (click)="toggleFreeText()"
+    ></p-button>
+    <div [@toggleAnimation]="showInput ? 'show' : 'hide'">
+      <form (ngSubmit)="submitForm()">
+        <textarea
+          rows="4"
+          cols="30"
+          pInputTextarea
+          [autoResize]="true"
+          class="w-full"
+          [(ngModel)]="userInput"
+          [ngModelOptions]="{ standalone: true }"
+          (keydown.enter)="onEnter($event)"
+        ></textarea>
+      </form>
+    </div>
+    <div
+      class="overflow-auto border-solid border-2 border-[#263238]"
+      [@toolbarAnimation]="showToolbar ? 'show' : 'hide'"
+    >
+      <p-tabView>
+        <p-tabPanel *ngFor="let tab of tabs" [header]="tab.header">
+          <div class="flex align-items-center gap-2">
+            <p-chip
+              *ngFor="let question of tab.questions; let qIndex = index"
+              [label]="question.label"
+              icon="pi pi-question-circle"
+              styleClass="cursor-pointer"
+              (click)="outputQuestion(question.label)"
+            ></p-chip>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div> `,
   styles: [],
   animations: [
     trigger('toolbarAnimation', [
@@ -107,7 +112,7 @@ export class HugibotToolbarComponent {
 
   showToolbar = true;
   showInput = false;
-  inputText = '';
+  userInput = '';
 
   tabs = [
     {
@@ -159,6 +164,18 @@ export class HugibotToolbarComponent {
       ],
     },
   ];
+
+  public onEnter(event: any): void {
+    event.preventDefault();
+    if (this.userInput.trim() !== '') {
+      this.submitForm();
+    }
+  }
+
+  public submitForm(): void {
+    this.chatService.sendMessageAndReceiveResponse(this.userInput);
+    this.userInput = '';
+  }
 
   public outputQuestion(question: string) {
     this.chatService.sendMessageAndReceiveResponse(question);
