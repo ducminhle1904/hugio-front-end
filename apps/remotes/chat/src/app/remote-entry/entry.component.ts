@@ -34,12 +34,6 @@ import { Component } from '@angular/core';
   ],
 })
 export class RemoteEntryComponent {
-  public selectedQuestion = '';
-
-  public selectQuestion(question: string) {
-    this.selectedQuestion = question;
-  }
-
   public fetchUserChat(user: string) {
     console.log(user);
   }

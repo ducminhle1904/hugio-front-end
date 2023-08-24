@@ -1,15 +1,17 @@
+import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   OnInit,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AvatarModule } from 'primeng/avatar';
 import { ChipModule } from 'primeng/chip';
 import { Chat, ChatService } from '../../service/chat.service';
-import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'ims-chat-content',
@@ -50,19 +52,22 @@ import { trigger, transition, style, animate } from '@angular/animations';
 export class ChatContentComponent implements OnInit {
   readonly chatService = inject(ChatService);
   readonly cdRef = inject(ChangeDetectorRef);
+  readonly destroyRef = inject(DestroyRef);
 
   public chatMessages: Chat[] = [];
 
   ngOnInit() {
-    this.chatService.currentChat.subscribe({
-      next: (messages) => {
-        console.log(messages);
-        this.chatMessages = messages;
-        this.cdRef.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error fetching chat messages:', error);
-      },
-    });
+    this.chatService.currentChat
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (messages) => {
+          console.log(messages);
+          this.chatMessages = messages;
+          this.cdRef.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error fetching chat messages:', error);
+        },
+      });
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, first } from 'rxjs';
 import { OrderService } from '@ims/data-access';
 
 export interface Chat {
@@ -32,18 +32,21 @@ export class ChatService {
     const updatedMessagesWithLoading = [...updatedMessages, loadingMessage];
     this.chatSubject.next(updatedMessagesWithLoading);
 
-    this.orderService.chatGpt(userInput).subscribe({
-      next: (response) => {
-        const botResponse: Chat = { text: response.response, isUser: false };
-        const updatedMessagesWithBotResponse = [
-          ...updatedMessages,
-          botResponse,
-        ];
-        this.chatSubject.next(updatedMessagesWithBotResponse);
-      },
-      error: (error) => {
-        console.error('Error sending user input:', error);
-      },
-    });
+    this.orderService
+      .chatGpt(userInput)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          const botResponse: Chat = { text: response.response, isUser: false };
+          const updatedMessagesWithBotResponse = [
+            ...updatedMessages,
+            botResponse,
+          ];
+          this.chatSubject.next(updatedMessagesWithBotResponse);
+        },
+        error: (error) => {
+          console.error('Error sending user input:', error);
+        },
+      });
   }
 }
