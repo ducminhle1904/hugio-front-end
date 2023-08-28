@@ -12,6 +12,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { AppLayoutService } from '../layout/app-layout.service';
+import { UserService } from '@ims/core';
 
 @Component({
   selector: 'ims-topbar',
@@ -55,6 +56,8 @@ import { AppLayoutService } from '../layout/app-layout.service';
 })
 export class TopbarComponent implements OnInit {
   readonly layoutService = inject(AppLayoutService);
+  readonly userService = inject(UserService);
+
   public items: MenuItem[] | undefined;
 
   @ViewChild('menubutton') menuButton!: ElementRef;
@@ -68,6 +71,7 @@ export class TopbarComponent implements OnInit {
       {
         label: 'Logout',
         icon: 'pi pi-fw pi-sign-out',
+        command: () => this.userService.logout(),
       },
     ];
   }

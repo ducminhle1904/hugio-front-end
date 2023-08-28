@@ -38,7 +38,7 @@ import { FormsModule } from '@angular/forms';
                 [label]="question.label"
                 icon="pi pi-question-circle"
                 styleClass="cursor-pointer"
-                (click)="outputQuestion(question.label)"
+                (click)="outputQuestion(question.label, question.data)"
               ></p-chip>
             </div>
           </p-tabPanel>
@@ -111,57 +111,29 @@ export class HugibotToolbarComponent {
 
   tabs = [
     {
-      header: 'Product Availability',
+      header: 'Product Statistic',
       questions: [
-        { label: 'Is product X available?' },
-        { label: 'Can I check the availability of Y?' },
-        { label: 'Do you have product Z in stock?' },
+        { label: 'Please give me statistics for today?', data: 'ps1' },
+        { label: 'Please give me statistics for this month?', data: 'ps2' },
       ],
     },
     {
-      header: 'Stock Quantity',
+      header: 'Sales performance',
       questions: [
-        { label: 'How many units of X do you have?' },
-        { label: 'What is the stock level of Y?' },
-        { label: 'Can you tell me how many Z are left?' },
-      ],
-    },
-    {
-      header: 'Reordering',
-      questions: [
-        { label: 'Are we running low on product X?' },
-        { label: "Could you check if it's time to reorder Y?" },
-        { label: 'Suggest products that need to be restocked.' },
-      ],
-    },
-    {
-      header: 'Product Details',
-      questions: [
-        { label: 'Are we running low on product X?' },
-        { label: "Could you check if it's time to reorder Y?" },
-        { label: 'Suggest products that need to be restocked.' },
-      ],
-    },
-    {
-      header: 'Price and Discounts',
-      questions: [
-        { label: 'Are we running low on product X?' },
-        { label: "Could you check if it's time to reorder Y?" },
-        { label: 'Suggest products that need to be restocked.' },
-      ],
-    },
-    {
-      header: 'Out of Stock Handling',
-      questions: [
-        { label: 'Are we running low on product X?' },
-        { label: "Could you check if it's time to reorder Y?" },
-        { label: 'Suggest products that need to be restocked.' },
+        {
+          label: 'Which products should not be imported next month?',
+          data: 'sp1',
+        },
+        {
+          label: 'Which products should be imported more of next month?',
+          data: 'sp2',
+        },
       ],
     },
   ];
 
-  public outputQuestion(question: string) {
-    this.chatService.sendMessageAndReceiveResponse(question);
+  public outputQuestion(question: string, code: string) {
+    this.chatService.sendMessageAndReceiveResponse(question, code);
   }
 
   public toggleFreeText() {

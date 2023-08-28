@@ -22,7 +22,7 @@ export class ChatService {
     .asObservable()
     .pipe(distinctUntilChanged());
 
-  sendMessageAndReceiveResponse(userInput: string) {
+  sendMessageAndReceiveResponse(userInput: string, code: string) {
     const newMessage: Chat = { text: userInput, isUser: true };
     const updatedMessages = [...this.chatSubject.value, newMessage];
     this.chatSubject.next(updatedMessages);
@@ -33,7 +33,7 @@ export class ChatService {
     this.chatSubject.next(updatedMessagesWithLoading);
 
     this.orderService
-      .chatGpt(userInput)
+      .chatGpt(code)
       .pipe(first())
       .subscribe({
         next: (response) => {
