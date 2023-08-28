@@ -44,8 +44,13 @@ export class ChatService {
           ];
           this.chatSubject.next(updatedMessagesWithBotResponse);
         },
-        error: (error) => {
-          console.error('Error sending user input:', error);
+        error: () => {
+          const errorMessage: Chat = {
+            text: 'An error occurred.',
+            isUser: false,
+          };
+          const updatedMessagesWithError = [...updatedMessages, errorMessage];
+          this.chatSubject.next(updatedMessagesWithError);
         },
       });
   }

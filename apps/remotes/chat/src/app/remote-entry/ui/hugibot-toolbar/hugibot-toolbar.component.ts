@@ -5,7 +5,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ChatService } from '../../service/chat.service';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import {
   trigger,
   state,
@@ -24,8 +24,8 @@ import { FormsModule } from '@angular/forms';
     ChipModule,
     TabViewModule,
     ButtonModule,
-    InputTextModule,
     FormsModule,
+    InputTextareaModule,
   ],
   template: `<p class="font-bold">Choose topic you want to know</p>
     <p-toolbar styleClass="overflow-auto">
@@ -47,7 +47,7 @@ import { FormsModule } from '@angular/forms';
       <div [@toggleAnimation]="showInput ? 'show' : 'hide'">
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
-          <input type="text" pInputText [(ngModel)]="inputText" />
+          <input type="text" pInputText [(ngModel)]="userInput" />
         </span>
       </div>
 
@@ -107,7 +107,7 @@ export class HugibotToolbarComponent {
 
   showToolbar = true;
   showInput = false;
-  inputText = '';
+  userInput = '';
 
   tabs = [
     {
@@ -131,6 +131,21 @@ export class HugibotToolbarComponent {
       ],
     },
   ];
+
+  public onEnter(event: any): void {
+    event.preventDefault();
+    if (this.userInput.trim() !== '') {
+      this.submitForm();
+    }
+  }
+
+  public submitForm(): void {
+    this.chatService.sendMessageAndReceiveResponse(
+      this.userInput,
+      this.userInput
+    );
+    this.userInput = '';
+  }
 
   public outputQuestion(question: string, code: string) {
     this.chatService.sendMessageAndReceiveResponse(question, code);

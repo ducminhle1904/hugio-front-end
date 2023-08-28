@@ -20,7 +20,8 @@ import { Chat, ChatService } from '../../service/chat.service';
   template: `<div class="flex flex-col">
     <div
       *ngFor="let message of chatMessages; let i = index"
-      class="mb-5 flex gap-2 items-center w-1/2"
+      class="mb-5 flex gap-2 w-1/2"
+      style="align-items: self-start"
       [ngClass]="{
         'self-end justify-end': message.isUser,
         'self-start': !message.isUser
@@ -61,7 +62,6 @@ export class ChatContentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (messages) => {
-          console.log(messages);
           this.chatMessages = messages;
           this.cdRef.detectChanges();
         },

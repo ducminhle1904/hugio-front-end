@@ -20,7 +20,8 @@
             "prefix": "ims",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@typescript-eslint/no-explicit-any": "off"
       },
       "extends": [
         "plugin:@nx/angular",
