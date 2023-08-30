@@ -15,12 +15,13 @@ import { Observable, map } from 'rxjs';
 export class UserService {
   private readonly http = inject(HttpClient);
 
-  public queryListUser(): Observable<UserListResponse> {
+  public queryListUser(userType = 'client'): Observable<UserListResponse> {
     return this.http.post<UserListResponse>('/user_service/user/all', {
       request: {
         page_number: 1,
-        page_size: 100,
+        page_size: 1000,
         sort: 'ASC',
+        content: userType,
       },
     });
   }
@@ -30,7 +31,7 @@ export class UserService {
       .post<RoleResponse>('/user_service/role/all', {
         request: {
           page_number: 1,
-          page_size: 100,
+          page_size: 1000,
           sort: 'ASC',
         },
       })

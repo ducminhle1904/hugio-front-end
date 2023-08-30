@@ -8,14 +8,21 @@ export const remoteRoutes: Route[] = [
     children: [
       {
         path: '',
-        redirectTo: '/list',
+        redirectTo: '/client',
         pathMatch: 'full',
       },
       {
-        path: 'list',
+        path: 'client',
         loadComponent: () =>
-          import('./features/user-list/user-list.component').then(
+          import('./features/client-list/client-list.component').then(
             (c) => c.UserListComponent
+          ),
+      },
+      {
+        path: 'employee',
+        loadComponent: () =>
+          import('./features/employee-list/employee-list.component').then(
+            (c) => c.EmployeeListComponent
           ),
       },
     ],

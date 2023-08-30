@@ -4,6 +4,7 @@ import {
   DestroyRef,
   OnDestroy,
   OnInit,
+  ViewChild,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
@@ -20,12 +21,13 @@ import {
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductService } from '@ims/data-access';
 import { LoadingOverlayService } from '@ims/shared';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'ims-product-list',
@@ -42,6 +44,7 @@ import { LoadingOverlayService } from '@ims/shared';
     ProductDialogComponent,
     DynamicDialogModule,
     DialogModule,
+    InputTextModule,
   ],
   template: ` <p-dialog
       header="QR code"
@@ -54,6 +57,7 @@ import { LoadingOverlayService } from '@ims/shared';
     /></p-dialog>
     <p-card header="Product List" styleClass="h-full">
       <p-table
+        #productTable
         [value]="products"
         styleClass="p-datatable-sm"
         [paginator]="true"
@@ -65,12 +69,24 @@ import { LoadingOverlayService } from '@ims/shared';
         scrollHeight="'100%'"
       >
         <ng-template pTemplate="caption">
-          <p-button
-            icon="pi pi-plus"
-            label="Add product"
-            styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
-            (click)="createProduct()"
-          ></p-button>
+          <div class="flex items-center justify-between">
+            <p-button
+              icon="pi pi-plus"
+              label="Add product"
+              styleClass="p-button-sm p-button-raised p-button-secondary"
+              (click)="createProduct()"
+            ></p-button>
+            <span class="p-input-icon-left ml-auto">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                placeholder="Search product"
+                [(ngModel)]="productNameFilter"
+                (input)="applyProductNameFilter()"
+              />
+            </span>
+          </div>
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
@@ -131,6 +147,11 @@ import { LoadingOverlayService } from '@ims/shared';
             </td>
           </tr>
         </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No product found.</td>
+          </tr>
+        </ng-template>
       </p-table>
     </p-card>`,
   styles: [
@@ -160,15 +181,32 @@ export class ProductListComponent implements OnInit, OnDestroy {
   readonly loadingOverlayService = inject(LoadingOverlayService);
   readonly notificationService = inject(NotificationService);
 
+  @ViewChild('productTable') productTable!: Table;
+
   public products: Product[] = [];
   public items: MenuItem[] | undefined;
   public qrCodeModal = false;
   public qrImage = '';
 
+  // Property to hold the filter value
+  public productNameFilter = '';
+
   private ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
     this.fetchProducts();
+  }
+
+  applyProductNameFilter() {
+    if (this.productNameFilter === '') {
+      this.productTable.filter('', 'product_name', 'contains'); // Clear filter
+    } else {
+      this.productTable.filter(
+        this.productNameFilter,
+        'product_name',
+        'contains'
+      );
+    }
   }
 
   public quantityStatus(quantity: number): string {

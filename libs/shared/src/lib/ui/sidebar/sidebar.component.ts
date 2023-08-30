@@ -69,13 +69,18 @@ export class SidebarComponent implements OnInit {
         label: 'MANAGEMENT',
         items: [
           {
-            label: 'Client',
-            icon: 'pi pi-fw pi-user',
+            label: 'User',
+            icon: 'pi pi-fw pi-users',
             items: [
               {
-                label: 'List',
-                icon: 'pi pi-fw pi-list',
-                routerLink: ['/remotes-user/list'],
+                label: 'Client',
+                icon: 'pi pi-fw pi-user',
+                routerLink: ['/remotes-user/client'],
+              },
+              {
+                label: 'Employee',
+                icon: 'pi pi-fw pi-user',
+                routerLink: ['/remotes-user/employee'],
               },
             ],
           },

@@ -4,6 +4,7 @@ import {
   DestroyRef,
   OnDestroy,
   OnInit,
+  ViewChild,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
@@ -13,9 +14,9 @@ import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { UserDialogComponent } from '../../components/user-dialog/user-dialog.component';
+import { UserDialogComponent } from '../../components/client-dialog/client-dialog.component';
 import {
   DialogService,
   DynamicDialogModule,
@@ -24,6 +25,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '@ims/data-access';
 import { LoadingOverlayService } from '@ims/shared';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'ims-user-list',
@@ -38,9 +40,11 @@ import { LoadingOverlayService } from '@ims/shared';
     TagModule,
     UserDialogComponent,
     DynamicDialogModule,
+    InputTextModule,
   ],
   template: ` <p-card header="Client List" styleClass="h-full">
     <p-table
+      #clientTable
       [value]="users"
       styleClass="p-datatable-sm"
       [paginator]="true"
@@ -50,14 +54,27 @@ import { LoadingOverlayService } from '@ims/shared';
       [rowsPerPageOptions]="[10, 25, 50]"
       [scrollable]="true"
       scrollHeight="'100%'"
+      [globalFilterFields]="['full_name', 'email', 'phone_number', 'address']"
     >
       <ng-template pTemplate="caption">
-        <p-button
-          icon="pi pi-plus"
-          label="Add user"
-          styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
-          (click)="createUser()"
-        ></p-button>
+        <div class="flex items-center justify-between">
+          <p-button
+            icon="pi pi-plus"
+            label="Add client"
+            styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
+            (click)="addClient()"
+          ></p-button>
+          <span class="p-input-icon-left ml-auto">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Search cient"
+              [(ngModel)]="globalFilter"
+              (input)="applyGlobalFilter()"
+            />
+          </span>
+        </div>
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
@@ -105,6 +122,11 @@ import { LoadingOverlayService } from '@ims/shared';
           </td>
         </tr>
       </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">No client found.</td>
+        </tr>
+      </ng-template>
     </p-table>
   </p-card>`,
   styles: [
@@ -134,16 +156,23 @@ export class UserListComponent implements OnInit, OnDestroy {
   readonly loadingOverlayService = inject(LoadingOverlayService);
   readonly notificationService = inject(NotificationService);
 
+  @ViewChild('clientTable') clientTable!: Table;
+
   public users: User[] = [];
+  public globalFilter = '';
   private ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
     this.fetchUsers();
   }
 
-  public createUser() {
+  public applyGlobalFilter() {
+    this.clientTable.filterGlobal(this.globalFilter, 'contains');
+  }
+
+  public addClient() {
     this.ref = this.dialogService.open(UserDialogComponent, {
-      header: 'Create User',
+      header: 'Add new client',
       contentStyle: { overflow: 'auto' },
       baseZIndex: 10000,
       data: {
@@ -167,7 +196,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   public updateUser(user: User) {
     this.ref = this.dialogService.open(UserDialogComponent, {
-      header: 'Update User',
+      header: 'Update client',
       contentStyle: { overflow: 'auto' },
       baseZIndex: 10000,
       data: {

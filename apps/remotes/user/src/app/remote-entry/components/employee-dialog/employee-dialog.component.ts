@@ -16,7 +16,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'ims-user-dialog',
+  selector: 'ims-employee-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -119,7 +119,7 @@ import { Observable } from 'rxjs';
   </form>`,
   styles: [],
 })
-export class UserDialogComponent implements OnInit {
+export class EmployeeDialogComponent implements OnInit {
   readonly fb = inject(UntypedFormBuilder);
   readonly userService = inject(UserService);
   readonly ref = inject(DynamicDialogRef);
