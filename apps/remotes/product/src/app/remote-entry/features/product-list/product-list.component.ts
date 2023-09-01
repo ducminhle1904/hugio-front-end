@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NotificationService, Product } from '@ims/core';
+import { HasRoleDirective, NotificationService, Product } from '@ims/core';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -45,9 +45,10 @@ import { InputTextModule } from 'primeng/inputtext';
     DynamicDialogModule,
     DialogModule,
     InputTextModule,
+    HasRoleDirective,
   ],
   template: ` <p-dialog
-      header="QR code"
+      [header]="productQrName"
       [(visible)]="qrCodeModal"
       [style]="{ width: '250px' }"
       ><img
@@ -71,6 +72,7 @@ import { InputTextModule } from 'primeng/inputtext';
         <ng-template pTemplate="caption">
           <div class="flex items-center justify-between">
             <p-button
+              *appHasRole="'ADMIN'"
               icon="pi pi-plus"
               label="Add product"
               styleClass="p-button-sm p-button-raised p-button-secondary"
@@ -96,7 +98,7 @@ import { InputTextModule } from 'primeng/inputtext';
             <th>Category</th>
             <th>Quantity</th>
             <th>Status</th>
-            <th>Action</th>
+            <th *appHasRole="'ADMIN'">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-product>
@@ -125,7 +127,7 @@ import { InputTextModule } from 'primeng/inputtext';
                 [severity]="quantityStatus(product.product_quantity)"
               ></p-tag>
             </td>
-            <td>
+            <td *appHasRole="'ADMIN'">
               <div class="flex gap-1">
                 <p-button
                   icon="pi pi-pencil"
@@ -141,7 +143,9 @@ import { InputTextModule } from 'primeng/inputtext';
                 <p-button
                   icon="pi pi-qrcode"
                   styleClass="p-button-sm p-button-danger"
-                  (click)="viewQrCode(product.product_uid)"
+                  (click)="
+                    viewQrCode(product.product_uid, product.product_name)
+                  "
                 ></p-button>
               </div>
             </td>
@@ -187,6 +191,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   public items: MenuItem[] | undefined;
   public qrCodeModal = false;
   public qrImage = '';
+  public productQrName = 'Qr code';
 
   // Property to hold the filter value
   public productNameFilter = '';
@@ -317,7 +322,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
       });
   }
 
-  public viewQrCode(product_uid: string) {
+  public viewQrCode(product_uid: string, product_name: string) {
+    this.productQrName = product_name;
     this.loadingOverlayService.show();
     this.productService
       .getProductQr(product_uid)

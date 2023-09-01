@@ -2,6 +2,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { OrderService } from '@ims/data-access';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OrderStatisticResponse } from '@ims/core';
+import { getCurrentMonth, getCurrentYear } from '@ims/shared';
 
 @Component({
   selector: 'ims-remotes-summary-entry',
@@ -44,8 +45,8 @@ export class RemoteEntryComponent implements OnInit {
   private fetchOrderStatistic() {
     const body = {
       request: {
-        year: 2023,
-        month: 8,
+        year: getCurrentYear(),
+        month: getCurrentMonth(),
       },
     };
     this.orderService

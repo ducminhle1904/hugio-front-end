@@ -25,7 +25,7 @@ export class OrderService {
     return this.http.post<OrderResponse>('/order_service/order/all', {
       request: {
         page_number: 1,
-        page_size: 100,
+        page_size: 1000,
         sort: 'ASC',
       },
     });

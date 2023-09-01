@@ -47,13 +47,13 @@ export class UserService {
     void this.router.navigate(['/remotes-auth']);
   }
 
-  getCurrentUser(): Observable<{ response: InfoResponse }> {
+  getCurrentUser(): Observable<InfoResponse> {
     return this.http
-      .post<{ response: InfoResponse }>('/auth_service/auth/retrieve-info', {})
+      .post<InfoResponse>('/auth_service/auth/retrieve-info', {})
       .pipe(
         tap({
           next: ({ response }) => {
-            this.currentUserSubject.next(response.response);
+            this.currentUserSubject.next(response);
             this.isAuthenticatedSubject.next(true);
           },
           error: () => this.purgeAuth(),

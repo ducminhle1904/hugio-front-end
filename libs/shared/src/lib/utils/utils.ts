@@ -32,3 +32,26 @@ export function closeFullscreen(document: any) {
     document.msExitFullscreen();
   }
 }
+
+// Get the current date in the format 'YYYY-MM-DD'
+export function getCurrentDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Get the current month in the format 'MM'
+export function getCurrentMonth(): number {
+  const now = new Date();
+  const month = now.getMonth() + 1; // Month is zero-based, so add 1
+  return month;
+}
+
+// Get the current year in the format 'YYYY'
+export function getCurrentYear(): number {
+  const now = new Date();
+  const year = now.getFullYear();
+  return Number(year);
+}

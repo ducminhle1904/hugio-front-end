@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NotificationService, User } from '@ims/core';
+import { HasRoleDirective, NotificationService, User } from '@ims/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -42,6 +42,7 @@ import { InputTextModule } from 'primeng/inputtext';
     DynamicDialogModule,
     ChipModule,
     InputTextModule,
+    HasRoleDirective,
   ],
   template: ` <p-card header="Employee List" styleClass="h-full">
     <p-table
@@ -60,6 +61,7 @@ import { InputTextModule } from 'primeng/inputtext';
       <ng-template pTemplate="caption">
         <div class="flex items-center justify-between">
           <p-button
+            *appHasRole="'ADMIN'"
             icon="pi pi-plus"
             label="Add employee"
             styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
@@ -85,7 +87,7 @@ import { InputTextModule } from 'primeng/inputtext';
           <th>Address</th>
           <th>Role</th>
           <th>Status</th>
-          <th>Action</th>
+          <th *appHasRole="'ADMIN'">Action</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-user>
@@ -105,7 +107,7 @@ import { InputTextModule } from 'primeng/inputtext';
               [severity]="user.active ? 'success' : 'danger'"
             ></p-tag>
           </td>
-          <td>
+          <td *appHasRole="'ADMIN'">
             <div class="flex gap-1" *ngIf="user.active; else reactive">
               <p-button
                 icon="pi pi-pencil"

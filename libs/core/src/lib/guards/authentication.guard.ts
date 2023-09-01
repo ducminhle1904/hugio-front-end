@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
-import { UserService } from '../services/user.service';
+import { UserService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',

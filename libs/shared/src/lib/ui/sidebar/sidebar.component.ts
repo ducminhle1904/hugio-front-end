@@ -37,16 +37,16 @@ export class SidebarComponent implements OnInit {
             icon: 'pi pi-fw pi-th-large',
             routerLink: ['/remotes-summary'],
           },
-          {
-            label: 'Analysis',
-            icon: 'pi pi-fw pi-chart-bar',
-            routerLink: ['/remotes-analysis'],
-          },
-          {
-            label: 'Cashbook',
-            icon: 'pi pi-fw pi-wallet',
-            routerLink: ['/remotes-cashbook'],
-          },
+          // {
+          //   label: 'Analysis',
+          //   icon: 'pi pi-fw pi-chart-bar',
+          //   routerLink: ['/remotes-analysis'],
+          // },
+          // {
+          //   label: 'Cashbook',
+          //   icon: 'pi pi-fw pi-wallet',
+          //   routerLink: ['/remotes-cashbook'],
+          // },
           {
             label: 'Order',
             icon: 'pi pi-fw pi-shopping-cart',
@@ -105,11 +105,11 @@ export class SidebarComponent implements OnInit {
             icon: 'pi pi-fw pi-comment',
             routerLink: ['/remotes-chat'],
           },
-          {
-            label: 'Calendar',
-            icon: 'pi pi-fw pi-calendar',
-            routerLink: ['/'],
-          },
+          // {
+          //   label: 'Calendar',
+          //   icon: 'pi pi-fw pi-calendar',
+          //   routerLink: ['/'],
+          // },
         ],
       },
     ];

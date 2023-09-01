@@ -10,7 +10,7 @@ import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable()
 export class TimeoutInterceptor implements HttpInterceptor {
-  private timeoutDuration = 10000; // 15 seconds in milliseconds
+  private timeoutDuration = 20000; // 15 seconds in milliseconds
 
   intercept(
     request: HttpRequest<any>,

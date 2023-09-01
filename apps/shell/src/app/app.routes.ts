@@ -55,28 +55,28 @@ export const appRoutes: Route[] = [
         },
         canActivate: [AuthGuard],
       },
-      {
-        path: 'remotes-cashbook',
-        loadChildren: () =>
-          loadRemoteModule('remotes-cashbook', './Module').then(
-            (m) => m.RemoteEntryModule
-          ),
-        data: {
-          breadcrumb: 'Cashbook',
-        },
-        canActivate: [AuthGuard],
-      },
-      {
-        path: 'remotes-analysis',
-        loadChildren: () =>
-          loadRemoteModule('remotes-analysis', './Module').then(
-            (m) => m.RemoteEntryModule
-          ),
-        data: {
-          breadcrumb: 'Analysis',
-        },
-        canActivate: [AuthGuard],
-      },
+      // {
+      //   path: 'remotes-cashbook',
+      //   loadChildren: () =>
+      //     loadRemoteModule('remotes-cashbook', './Module').then(
+      //       (m) => m.RemoteEntryModule
+      //     ),
+      //   data: {
+      //     breadcrumb: 'Cashbook',
+      //   },
+      //   canActivate: [AuthGuard],
+      // },
+      // {
+      //   path: 'remotes-analysis',
+      //   loadChildren: () =>
+      //     loadRemoteModule('remotes-analysis', './Module').then(
+      //       (m) => m.RemoteEntryModule
+      //     ),
+      //   data: {
+      //     breadcrumb: 'Analysis',
+      //   },
+      //   canActivate: [AuthGuard],
+      // },
       {
         path: 'remotes-summary',
         loadChildren: () =>

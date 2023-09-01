@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NotificationService, User } from '@ims/core';
+import { HasRoleDirective, NotificationService, User } from '@ims/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -41,6 +41,7 @@ import { InputTextModule } from 'primeng/inputtext';
     UserDialogComponent,
     DynamicDialogModule,
     InputTextModule,
+    HasRoleDirective
   ],
   template: ` <p-card header="Client List" styleClass="h-full">
     <p-table
@@ -59,6 +60,7 @@ import { InputTextModule } from 'primeng/inputtext';
       <ng-template pTemplate="caption">
         <div class="flex items-center justify-between">
           <p-button
+            *appHasRole="'ADMIN'"
             icon="pi pi-plus"
             label="Add client"
             styleClass="p-button-sm p-button-raised p-button-secondary mb-3"
@@ -83,7 +85,7 @@ import { InputTextModule } from 'primeng/inputtext';
           <th>Phone</th>
           <th>Address</th>
           <th>Status</th>
-          <th>Action</th>
+          <th *appHasRole="'ADMIN'">Action</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-user>
@@ -92,7 +94,7 @@ import { InputTextModule } from 'primeng/inputtext';
           <td>{{ user.email }}</td>
           <td>{{ user.phone_number }}</td>
           <td>{{ user.address }}</td>
-          <td>
+          <td *appHasRole="'ADMIN'">
             <p-tag
               [value]="user.active ? 'Active' : 'Inactive'"
               [severity]="user.active ? 'success' : 'danger'"

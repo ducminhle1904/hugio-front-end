@@ -5,7 +5,7 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
-import { UserService } from '../services/user.service';
+import { UserService } from '../services/auth.service';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
