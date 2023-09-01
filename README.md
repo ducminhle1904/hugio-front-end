@@ -12,7 +12,7 @@ Table of Contents
 - License
 
 Introduction
-Welcome to the Micro Frontend Inventory System! This project aims to provide a flexible and scalable solution for managing inventories using Angular as the main framework, with a micro frontend architecture. The UI framework, ng-zorro-antd, and the CSS framework, Tailwind CSS, have been integrated to deliver a visually appealing and user-friendly experience.
+Welcome to the Micro Frontend Inventory System! This project aims to provide a flexible and scalable solution for managing inventories using Angular as the main framework, with a micro frontend architecture. The UI framework, PrimeNG, and the CSS framework, Tailwind CSS, have been integrated to deliver a visually appealing and user-friendly experience.
 
 With this inventory system, users can efficiently manage their inventory, track stock levels, add or remove items, generate reports, and much more. The micro frontend architecture allows for independent development and deployment of different parts of the system, fostering team collaboration and faster development cycles.
 
@@ -28,7 +28,7 @@ Technologies
 The project is built using the following technologies:
 
 - Angular: Main frontend framework.
-- ng-zorro-antd: UI framework for Angular.
+- PrimeNG: UI framework for Angular.
 - Tailwind CSS: CSS framework for responsive and customizable styling.
 - Nx.dev: A set of extensible dev tools for monorepos, enabling a smooth development experience.
 - [List other major technologies used in the project]
