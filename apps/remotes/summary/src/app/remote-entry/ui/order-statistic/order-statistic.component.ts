@@ -9,9 +9,9 @@ import { ButtonModule } from 'primeng/button';
   imports: [CommonModule, CardModule, ButtonModule],
   template: `<p-card [header]="title">
     <p class="font-extrabold text-4xl lg:text-6xl">{{ figure || 0 }}</p>
-    <span class="text-green-400"
+    <!-- <span class="text-green-400"
       ><i class="pi pi-arrow-up mr-1"></i>{{ percent || 0 }}%</span
-    ><span> from last month</span>
+    ><span> from last month</span> -->
 
     <ng-template pTemplate="footer">
       <p-button

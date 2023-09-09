@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '@ims/core';
+import { NotificationService, UserService } from '@ims/core';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
@@ -105,7 +105,8 @@ export class RemoteEntryComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private fb: UntypedFormBuilder
+    private fb: UntypedFormBuilder,
+    private notificationService: NotificationService
   ) {
     this.userService.isAuthenticated.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
@@ -130,6 +131,12 @@ export class RemoteEntryComponent implements OnInit {
         },
         error: (e) => {
           console.log(e);
+
+          this.notificationService.showNotification({
+            severity: 'error',
+            summary: 'Error',
+            detail: e.message,
+          });
           this.isLoading = false;
         },
       });

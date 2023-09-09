@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
+  OnDestroy,
   OnInit,
   ViewEncapsulation,
   inject,
@@ -159,6 +160,11 @@ import { Observable } from 'rxjs';
                     </td>
                   </tr>
                 </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="5">No product found.</td>
+                  </tr>
+                </ng-template>
               </p-table>
             </div>
           </td>
@@ -184,7 +190,7 @@ import { Observable } from 'rxjs';
   ],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class OrderListComponent implements OnInit {
+export class OrderListComponent implements OnInit, OnDestroy {
   readonly orderService = inject(OrderService);
   readonly loadingOverlayService = inject(LoadingOverlayService);
   readonly destroyRef = inject(DestroyRef);
@@ -255,5 +261,9 @@ export class OrderListComponent implements OnInit {
         this.loadingOverlayService.hide();
         this.orders = data;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.loadingOverlayService.hide();
   }
 }
