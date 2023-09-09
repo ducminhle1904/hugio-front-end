@@ -146,6 +146,7 @@ export class UserDialogComponent implements OnInit {
         : this.userService.editUser({
             ...formValue,
             user_uid: this.modalConfig.data.data.user_uid,
+            roles: ['CUSTOMER'],
           });
 
     userServiceCall.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
