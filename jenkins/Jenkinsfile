@@ -1,0 +1,116 @@
+def userIdCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+def now = (new Date()).format("yyMMddHHmmss", TimeZone.getTimeZone('Asia/Ho_Chi_Minh'))
+def dockerTag='ol'
+def appShellDockerImage='hugio/app_shell'
+def appAnalysisDockerImage='hugio/app_analysis'
+def appAuthDockerImage='hugio/app_auth'
+def appCashbookDockerImage='hugio/app_cashbook'
+def appProductDockerImage='hugio/app_product'
+def appSummaryDockerImage='hugio/app_summary'
+def appUserDockerImage='hugio/app_user'
+def appOrderDockerImage='hugio/app_order'
+def appChatDockerImage='hugio/app_chat'
+def k8sNamespace='frontend'
+def k8sReplica=1
+
+pipeline {
+    agent any
+    tools {
+        nodejs "node16"
+    }
+    environment {
+        GIT_CREDENTIALS_ID = 'tuanloc-github'
+        APPLICATION_GIT_BRANCH = 'main'
+        APPLICATION_GIT_REPOSITRY = 'https://github.com/ducminhle1904/hugio-front-end.git'
+        TARGET_DIR = '/home/ae403/hugio/front-end'
+    }
+    stages {
+        stage('Checkout source') {
+            steps {
+                script {
+                    def checkoutDetails = checkout([
+                        $class: 'GitSCM',
+                        branches: [[ name: ('*/' + APPLICATION_GIT_BRANCH) ]],
+                        doGenerateSubmoduleConfigurations: false,
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[ credentialsId: GIT_CREDENTIALS_ID, url: APPLICATION_GIT_REPOSITRY ]]
+                    ])
+                }
+
+            }
+        }
+        stage('Build service') {
+            steps {
+                script {
+                    CURRENT_DATE = new java.text.SimpleDateFormat('yyyyMMdd').format(new Date())
+                    CURRENT_TIME = new java.text.SimpleDateFormat('HHmmss').format(new Date())
+                    dockerTag = "$CURRENT_DATE" + "$CURRENT_TIME"
+                    sh "npm install"
+                    sh "npm run build"
+                }
+            }
+        }
+        stage('Copy source') {
+            steps {
+                script {
+                    sh "scp -i /var/jenkins_home/jenkins -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ./dist ae403@192.168.1.22:$TARGET_DIR"
+                    sh "scp -i /var/jenkins_home/jenkins -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ./deploy ae403@192.168.1.22:$TARGET_DIR"
+                    sh "scp -i /var/jenkins_home/jenkins -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ./nginx.conf ae403@192.168.1.22:$TARGET_DIR"
+                }
+            }
+        }
+        stage('Deploy source') {
+            steps {
+                script {
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appShellDockerImage:$dockerTag -f ./deploy/shell/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appAnalysisDockerImage:$dockerTag -f ./deploy/analysis/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appAuthDockerImage:$dockerTag -f ./deploy/auth/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appCashbookDockerImage:$dockerTag -f ./deploy/cashbook/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appProductDockerImage:$dockerTag -f ./deploy/product/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appSummaryDockerImage:$dockerTag -f ./deploy/summary/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appUserDockerImage:$dockerTag -f ./deploy/user/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appOrderDockerImage:$dockerTag -f ./deploy/order/Dockerfile\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker build . -t $appChatDockerImage:$dockerTag -f ./deploy/chat/Dockerfile\""
+
+                    withCredentials([string(credentialsId: 'ae403-key', variable: 'SSH_PASSWORD')]) {
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appShellDockerImage.tar $appShellDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appShellDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appAnalysisDockerImage.tar $appAnalysisDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appAnalysisDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appAuthDockerImage.tar $appAuthDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appAuthDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appCashbookDockerImage.tar $appCashbookDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appCashbookDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appProductDockerImage.tar $appProductDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appProductDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appSummaryDockerImage.tar $appSummaryDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appSummaryDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appUserDockerImage.tar $appUserDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appUserDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appOrderDockerImage.tar $appOrderDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appOrderDockerImage.tar ; rm -f *.tar\""
+                        sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker save -o appChatDockerImage.tar $appChatDockerImage:$dockerTag ; echo \$SSH_PASSWORD | sudo -S microk8s ctr image import appChatDockerImage.tar ; rm -f *.tar\""
+                    }
+
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appShellDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4200 -n $k8sNamespace app-shell ./deploy/shell/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appAnalysisDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4202 -n $k8sNamespace app-analysis ./deploy/analysis/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appAuthDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4206 -n $k8sNamespace app-auth ./deploy/auth/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appCashbookDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4203 -n $k8sNamespace app-cashbook ./deploy/cashbook/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appProductDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4205 -n $k8sNamespace app-product ./deploy/product/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appSummaryDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4201 -n $k8sNamespace app-summary ./deploy/summary/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appUserDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4204 -n $k8sNamespace app-user ./deploy/user/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appOrderDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4207 -n $k8sNamespace app-order ./deploy/order/helm_chart\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; microk8s.helm upgrade -i --set image.name=$appChatDockerImage,image.tag=$dockerTag,replica=$k8sReplica,tcp_port=4208 -n $k8sNamespace app-chat ./deploy/chat/helm_chart\""
+
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appShellDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appAnalysisDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appAuthDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appCashbookDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appProductDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appSummaryDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appUserDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appOrderDockerImage:$dockerTag\""
+                    sh "ssh -i /var/jenkins_home/jenkins ae403@192.168.1.22 \"cd $TARGET_DIR ; docker rmi $appChatDockerImage:$dockerTag\""
+                }
+            }
+        }
+    }
+
+// 	post {
+// 		always {
+// 			cleanWs()
+// 		}
+// 	}
+}
